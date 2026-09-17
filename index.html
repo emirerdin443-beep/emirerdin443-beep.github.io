@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0b0d12">
+  <meta name="description" content="Privacy-first offline image to vector converter">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+  <title>VectorForge</title>
+</head>
+<body>
+<header class="topbar"><div class="brand"><span class="mark">V</span><span>VectorForge</span></div><div class="status" id="status">Offline-first • Local processing</div></header>
+<main>
+<section class="workspace">
+  <aside class="panel controls">
+    <h2>Image</h2>
+    <label class="filebox" id="dropZone"><input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif"><span>Drop image here</span><small>or choose a file</small></label>
+    <div class="control-group">
+      <label>Brightness <output id="brightnessOut">0</output><input id="brightness" type="range" min="-100" max="100" value="0"></label>
+      <label>Contrast <output id="contrastOut">0</output><input id="contrast" type="range" min="-100" max="100" value="0"></label>
+      <label>Saturation <output id="saturationOut">0</output><input id="saturation" type="range" min="-100" max="100" value="0"></label>
+      <label>Hue <output id="hueOut">0°</output><input id="hue" type="range" min="-180" max="180" value="0"></label>
+      <label>Blur <output id="blurOut">0</output><input id="blur" type="range" min="0" max="8" step="0.25" value="0"></label>
+      <label>Sharpen <output id="sharpenOut">0</output><input id="sharpen" type="range" min="0" max="100" value="0"></label>
+    </div>
+    <h2>Vector</h2>
+    <div class="control-group">
+      <label>Colors <output id="colorsOut">24</output><input id="colors" type="range" min="2" max="64" value="24"></label>
+      <label>Detail <output id="detailOut">60%</output><input id="detail" type="range" min="10" max="100" value="60"></label>
+      <label>Minimum area <output id="areaOut">4 px</output><input id="area" type="range" min="1" max="100" value="4"></label>
+      <label>Smoothing <output id="smoothOut">2</output><input id="smooth" type="range" min="0" max="8" value="2"></label>
+    </div>
+  </aside>
+
+  <section class="preview panel">
+    <div class="preview-head"><span id="fileName">No image selected</span><span id="dimensions">—</span></div>
+    <div class="canvas-wrap" id="canvasWrap"><canvas id="previewCanvas"></canvas><div class="empty" id="empty">Your image preview appears here</div></div>
+    <div class="progress" id="progress"><span></span></div>
+  </section>
+
+  <aside class="panel controls output-panel">
+    <h2>Output</h2>
+    <label>Format<select id="format"><option value="svg">SVG</option><option value="png">PNG</option><option value="json">Color map JSON</option></select></label>
+    <div class="control-group">
+      <label>Width (px)<input id="outWidth" type="number" min="1" max="20000" value="1200"></label>
+      <label>Height<select id="outHeightMode"><option value="auto">Auto</option><option value="square">Square</option></select></label>
+    </div>
+    <label class="check"><input id="printer" type="checkbox"><span><b>3D Printer Friendly</b><small>Closed color regions, separate groups and print-safe cleanup</small></span></label>
+    <div id="printerOptions" class="control-group hidden">
+      <label>Minimum feature <output id="featureOut">0.8 mm</output><input id="feature" type="range" min="0.4" max="3" step="0.1" value="0.8"></label>
+      <label class="check"><input id="mergeTiny" type="checkbox" checked><span>Merge tiny regions</span></label>
+    </div>
+    <div class="color-list" id="colorList"><span>Detected colors will appear here</span></div>
+    <button id="convert" class="primary" disabled>Convert</button>
+    <button id="download" class="secondary" disabled>Download</button>
+    <p class="privacy">🔒 Images never leave this device. Conversion happens locally in your browser.</p>
+  </aside>
+</section>
+</main>
+<script src="image-processing.js"></script>
+<script src="svg-generator.js"></script>
+<script src="converter.js"></script>
+<script src="app.js"></script>
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');</script>
+</body>
+</html>
