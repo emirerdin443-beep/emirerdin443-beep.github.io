@@ -26,11 +26,13 @@
     </div>
     <h2 data-i18n="vector">Vector</h2>
     <div class="control-group">
+      <label data-i18n="traceEngine">Trace engine<select id="traceMode"><option value="advanced" data-i18n="advancedTrace">Advanced Trace</option><option value="max" data-i18n="maxTrace">MAX Advanced Trace</option></select></label>
       <label data-i18n="colors">Colors <output id="colorsOut">24</output><input id="colors" type="range" min="2" max="64" value="24"></label>
       <label data-i18n="detail">Detail <output id="detailOut">60%</output><input id="detail" type="range" min="10" max="100" value="60"></label>
       <label data-i18n="minimumArea">Minimum area <output id="areaOut">4 px</output><input id="area" type="range" min="1" max="100" value="4"></label>
       <label data-i18n="smoothing">Smoothing <output id="smoothOut">2</output><input id="smooth" type="range" min="0" max="8" value="2"></label>
     </div>
+    <p class="privacy" data-i18n="traceHelp">Advanced tracing builds closed paths from color regions instead of exporting pixel rectangles. MAX mode adds higher sampling and tiny-region cleanup.</p>
   </aside>
 
   <section class="preview panel">
@@ -59,6 +61,7 @@
 </section>
 </main>
 <script src="image-processing.js"></script>
+<script src="trace-engine.js"></script>
 <script src="svg-generator.js"></script>
 <script src="converter.js"></script>
 <script src="i18n.js"></script>
