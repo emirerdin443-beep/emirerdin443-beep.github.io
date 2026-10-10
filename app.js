@@ -6,6 +6,7 @@
   const boardNav = document.getElementById('boardNav');
   const themeBtn = document.getElementById('themeBtn');
   const L = S.limits;
+  let ownerMode = false;
 
   /* ---------- utilities ---------- */
 
@@ -109,13 +110,14 @@
     const sage = p.sage ? ' <span class="sage">sage</span>' : '';
     const id = p.anon ? ` <span class="pid">ID: ${esc(p.anon)}</span>` : '';
     const ownTag = own ? ' <span class="own">(Sen)</span>' : '';
-    const del = own ? ` <button class="link danger" data-action="delete" data-no="${p.no}">[Sil]</button>` : '';
+    const del = (own || ownerMode) ? ` <button class="link danger" data-action="delete" data-no="${p.no}">${ownerMode && !own ? '[Owner: Sil]' : '[Sil]'}</button>` : '';
+    const adminTag = ownerMode ? ' <span class="own" title="Owner yetkisi etkin">[Owner]</span>' : '';
     const report = ` <button class="link" data-action="report" data-no="${p.no}">[Raporla]</button>`;
     return `<article class="post ${opts.op ? 'op' : 'reply'}" id="p${p.no}">
       <header class="phead">
         <span class="pname">${esc(p.name || 'Anonim')}</span>${sage}
         <time>${fmtTime(p.time)}</time>${id}
-        <a class="pno" href="#/${esc(p.board)}/t/${p.thread}?p=${p.no}" data-action="reply" data-no="${p.no}">No.${p.no}</a>${ownTag}${del}
+        <a class="pno" href="#/${esc(p.board)}/t/${p.thread}?p=${p.no}" data-action="reply" data-no="${p.no}">No.${p.no}</a>${ownTag}${adminTag}${del}
       </header>
       ${subject}
       <div class="pbody">
@@ -273,6 +275,7 @@
 
   async function render() {
     try {
+      ownerMode = await S.checkOwner();
       await S.refresh();
     } catch (err) {
       app.innerHTML = `<section class="hero"><h1>31chan bağlantı hatası</h1><p class="muted">${esc(err.message || 'API’ye ulaşılamadı.')}</p><button type="button" data-action="refresh">Yeniden dene</button></section>`;
@@ -404,7 +407,7 @@
       const msg = 'Bu gönderiyi silmek istiyor musun?' + (isOp ? '\nKonunun tüm yanıtları da silinecek.' : '');
       if (!confirm(msg)) return;
       try {
-        await S.deletePost(no);
+        await S.deletePost(no, ownerMode);
         render();
       } catch (err) {
         alert(err.message);
