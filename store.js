@@ -9,6 +9,7 @@
   const API = 'https://31chan-api.emirerdin443.workers.dev';
   const OWN_KEY = '31chan:own:v1';
   const SECRET_KEY = '31chan:secret:v1';
+  const DEVICE_KEY = '31chan:device:v1';
   const BOARDS = [
     { id: 'b', name: 'Rastgele', desc: 'Konu sınırı yok. Ne istersen paylaş.' },
     { id: 'g', name: 'Teknoloji', desc: 'Donanım, yazılım ve açık kaynak.' },
@@ -45,6 +46,16 @@
       localStorage.setItem(SECRET_KEY, s);
     }
     return s;
+  }
+  function deviceToken() {
+    let token = localStorage.getItem(DEVICE_KEY);
+    if (!token) {
+      const bytes = new Uint8Array(24);
+      crypto.getRandomValues(bytes);
+      token = Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
+      localStorage.setItem(DEVICE_KEY, token);
+    }
+    return token;
   }
   function anonIdFor(threadNo) {
     const str = secret() + ':' + threadNo;
@@ -88,7 +99,12 @@
   async function request(path, options = {}) {
     const response = await fetch(API + path, {
       ...options,
-      headers: { 'Content-Type': 'application/json', ...(options.headers || {}) }
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Owner-Token': secret(),
+        'X-Device-Token': deviceToken(),
+        ...(options.headers || {})
+      }
     });
     let data;
     try { data = await response.json(); }
@@ -226,9 +242,21 @@
     await refresh();
   }
 
+  async function adminState() {
+    return request('/api/admin/state', { headers: { 'X-Owner-Token': secret() } });
+  }
+
+  async function adminAction(action, payload = {}) {
+    return request('/api/admin/action', {
+      method: 'POST',
+      headers: { 'X-Owner-Token': secret() },
+      body: JSON.stringify({ action, ...payload })
+    });
+  }
+
   window.ChanStore = {
     boards: () => BOARDS.slice(),
     getBoard, listThreads, getThread, findPost, recentPosts, stats,
-    createThread, createReply, deletePost, reportPost, isOwn, checkOwner, refresh, limits: LIMITS
+    createThread, createReply, deletePost, reportPost, isOwn, checkOwner, refresh, adminState, adminAction, limits: LIMITS
   };
 })();
