@@ -12,6 +12,7 @@
 <body>
 <header class="topbar">
   <a class="brand" href="#/"><span>31chan</span></a>
+  <button class="link" id="devtoolsBtn" type="button" title="Eruda DevTools">DevTools</button>
   <nav class="boardnav" id="boardNav" aria-label="Panolar"></nav>
   <button class="link" id="themeBtn" type="button">Tema</button>
 </header>
@@ -21,7 +22,31 @@
 <footer class="footer">
   31chan anonim bir imageboard'dur. Gönderiler ortak sunucu veritabanında saklanır ve diğer ziyaretçiler tarafından görülebilir.
 </footer>
-<script src="store.js"></script>
+<script>
+  (function () {
+    const btn = document.getElementById('devtoolsBtn');
+    btn.addEventListener('click', function () {
+      if (window.eruda) { window.eruda.show(); return; }
+      btn.disabled = true;
+      btn.textContent = 'Yükleniyor…';
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/eruda';
+      script.onload = function () {
+        window.eruda.init();
+        window.eruda.show();
+        btn.disabled = false;
+        btn.textContent = 'DevTools';
+      };
+      script.onerror = function () {
+        btn.disabled = false;
+        btn.textContent = 'DevTools';
+        alert('Eruda yüklenemedi. İnternet bağlantısını kontrol et.');
+      };
+      document.head.appendChild(script);
+    });
+  })();
+  </script>
+  <script src="store.js"></script>
 <script src="app.js"></script>
 <script>if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');</script>
 </body>
