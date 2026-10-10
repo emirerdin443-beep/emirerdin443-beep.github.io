@@ -1,4 +1,4 @@
-const CACHE = '31chan-v2';
+const CACHE = '31chan-v3';
 const ASSETS = ['./', './index.html', './style.css', './store.js', './app.js', './manifest.json'];
 
 self.addEventListener('install', e => e.waitUntil(
