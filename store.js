@@ -101,6 +101,7 @@
       ...options,
       headers: {
         'Content-Type': 'application/json',
+        'X-Device-Token': deviceToken(),
         ...(options.headers || {})
       }
     });
