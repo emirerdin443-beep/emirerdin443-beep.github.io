@@ -110,7 +110,7 @@
     const sage = p.sage ? ' <span class="sage">sage</span>' : '';
     const id = p.anon ? ` <span class="pid">ID: ${esc(p.anon)}</span>` : '';
     const ownTag = own ? ' <span class="own">(Sen)</span>' : '';
-    const del = (own || ownerMode) ? ` <button class="link danger" data-action="delete" data-no="${p.no}">${ownerMode && !own ? '[Owner: Sil]' : '[Sil]'}</button>` : '';
+    const del = (own || ownerMode) ? ` <button class="link danger" data-action="delete" data-no="${p.no}">${ownerMode && !own ? '[Sil]' : '[Sil]'}</button>` : '';
     const adminTag = '';
     const report = ` <button class="link" data-action="report" data-no="${p.no}">[Raporla]</button>`;
     return `<article class="post ${opts.op ? 'op' : 'reply'}" id="p${p.no}">
@@ -173,7 +173,7 @@
           <span class="muted">No.${p.no}</span>
            <span class="snip">${esc(snippet(p.comment || p.subject || '[görsel]', 120))}</span>
         </a>
-        ${ownerMode ? `<button class="link danger" data-action="delete" data-no="${p.no}">[Owner: Sil]</button>` : ''}
+        ${ownerMode ? `<button class="link danger" data-action="delete" data-no="${p.no}">[Sil]</button>` : ''}
       </li>`).join('');
 
     return `
@@ -238,7 +238,7 @@
           <div class="csub">${esc(t.op.subject || '(konusuz)')}</div>
           <div class="cmeta">R: ${t.replies.length} · ${esc(snippet(t.op.comment, 60))}</div>
         </a>
-        ${ownerMode ? '<button class="link danger" data-action="delete" data-no="' + t.op.no + '">[Owner: Sil]</button>' : ''}
+        ${ownerMode ? '<button class="link danger" data-action="delete" data-no="' + t.op.no + '">[Sil]</button>' : ''}
       </div>`;
     }).join('');
     return `
