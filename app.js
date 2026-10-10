@@ -160,6 +160,7 @@
     const bans = Array.isArray(adminData?.bans) ? adminData.bans : [];
     const reports = Array.isArray(adminData?.reports) ? adminData.reports : [];
     const logs = Array.isArray(adminData?.logs) ? adminData.logs : [];
+    const users = Array.isArray(adminData?.users) ? adminData.users : [];
     const site = adminData?.site || {};
     const suspended = Number(site.suspended_until || 0) > Math.floor(Date.now() / 1000);
     const banRows = bans.map(b => `<li>
@@ -198,6 +199,14 @@
       </div>
       <h3>Aktif engeller (${bans.length})</h3>
       ${banRows ? '<ul class="admin-list">' + banRows + '</ul>' : '<p class="muted">Aktif engel yok.</p>'}
+      <h3>Kullanıcılar · gönderiden engelle (${users.length})</h3>
+      ${users.length ? '<ul class="admin-list">' + users.slice(0, 40).map(u => `<li>
+        <div><b>${esc(u.name || 'Anonim')}</b> · <code>/${esc(u.board || 'b')}/ #${Number(u.id)}</code>
+        <span class="muted">${u.anon ? 'ID: ' + esc(u.anon) : 'Anonim kullanıcı'}</span>
+        <small>${esc(u.created_at || '')}</small></div>
+        <button type="button" class="link danger" data-action="admin-ban-post-user" data-post-id="${Number(u.id)}">Banla</button>
+      </li>`).join('') + '</ul>' : '<p class="muted">Ban hedefi bulunamadı.</p>'}
+      <p class="muted small">Tokenler panelde gösterilmez. Ban, seçilen gönderinin sunucudaki kullanıcı eşleşmesi üzerinden uygulanır.</p>
       <h3>Açık raporlar (${reports.length})</h3>
       ${reportRows ? '<ul class="admin-list">' + reportRows + '</ul>' : '<p class="muted">Açık rapor yok.</p>'}
       <h3>Son moderasyon işlemleri</h3>
@@ -531,6 +540,19 @@
         adminData = await S.adminState();
         render();
       } catch (err) { alert(err.message || 'Kick başarısız.'); }
+    } else if (action === 'admin-ban-post-user') {
+      e.preventDefault();
+      const postId = Number(el.dataset.postId);
+      const duration = prompt('Ban süresi dakika olarak (0 = kalıcı):', '60');
+      if (duration === null) return;
+      if (!/^\\d+$/.test(duration.trim()) || Number(duration) > 525600) { alert('0 ile 525600 arasında dakika gir.'); return; }
+      const reason = prompt('Ban nedeni (isteğe bağlı):', 'Moderasyon') || '';
+      if (!confirm('Bu gönderinin yazarı banlansın mı?')) return;
+      try {
+        await S.adminAction('ban_user_by_post', { post_id: postId, minutes: Number(duration), reason });
+        adminData = await S.adminState();
+        render();
+      } catch (err) { alert(err.message || 'Kullanıcı banlanamadı.'); }
     } else if (action === 'admin-unban') {
       e.preventDefault();
       if (!confirm('Bu engeli kaldırmak istiyor musun?')) return;
