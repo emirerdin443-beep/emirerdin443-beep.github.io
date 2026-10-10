@@ -101,8 +101,6 @@
       ...options,
       headers: {
         'Content-Type': 'application/json',
-        'X-Owner-Token': secret(),
-        'X-Device-Token': deviceToken(),
         ...(options.headers || {})
       }
     });
