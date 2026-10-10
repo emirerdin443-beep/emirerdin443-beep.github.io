@@ -12,7 +12,8 @@ Anonim bir imageboard. Hesap yok, kayıt yok, e-posta yok.
 - Liste ve katalog görünümleri
 - Kendi gönderilerini silme
 - Koyu / açık tema
-- Görseller tarayıcıda küçültülür (JPEG); küçük GIF'ler animasyonunu korur
+- Görseller tarayıcıda küçültülür (JPEG); 1,5 MB'a kadar GIF'ler animasyonunu korur
+- Aynı tarayıcıdaki sekmeler arasında depolama değişiklikleri yenilenir
 - PWA / çevrimdışı önbellek
 
 ## Çalıştırma
