@@ -209,8 +209,16 @@
     });
   }
 
-  async function deletePost(no) {
-    if (!isOwn(no)) throw new Error('Yalnızca bu tarayıcıdan oluşturduğun gönderileri silebilirsin.');
+  async function checkOwner() {
+    const result = await request('/api/owner/check', {
+      method: 'POST',
+      body: JSON.stringify({ owner_token: secret() })
+    });
+    return result.owner === true;
+  }
+
+  async function deletePost(no, ownerMode = false) {
+    if (!ownerMode && !isOwn(no)) throw new Error('Yalnızca kendi gönderilerini silebilirsin.');
     await request('/api/posts/' + Number(no), {
       method: 'DELETE',
       body: JSON.stringify({ owner_token: secret() })
@@ -221,6 +229,6 @@
   window.ChanStore = {
     boards: () => BOARDS.slice(),
     getBoard, listThreads, getThread, findPost, recentPosts, stats,
-    createThread, createReply, deletePost, reportPost, isOwn, refresh, limits: LIMITS
+    createThread, createReply, deletePost, reportPost, isOwn, checkOwner, refresh, limits: LIMITS
   };
 })();
