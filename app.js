@@ -489,6 +489,23 @@
     }
   });
 
+  // Re-check Owner permissions after the secret token was changed in DevTools.
+  const ownerRefreshBtn = document.getElementById('ownerRefreshBtn');
+  if (ownerRefreshBtn) {
+    ownerRefreshBtn.addEventListener('click', async () => {
+      ownerRefreshBtn.disabled = true;
+      const originalText = ownerRefreshBtn.textContent;
+      ownerRefreshBtn.textContent = 'Kontrol ediliyor…';
+      try {
+        await render();
+        ownerRefreshBtn.textContent = ownerMode ? 'Owner etkin' : 'Yetki yok';
+      } finally {
+        ownerRefreshBtn.disabled = false;
+        window.setTimeout(() => { ownerRefreshBtn.textContent = originalText; }, 1800);
+      }
+    });
+  }
+
   /* ---------- start ---------- */
 
   render();
