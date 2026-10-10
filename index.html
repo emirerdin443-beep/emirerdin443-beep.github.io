@@ -3,68 +3,25 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#0b0d12">
-  <meta name="description" content="Privacy-first offline image to vector converter">
+  <meta name="theme-color" content="#0f1012">
+  <meta name="description" content="31chan - anonim imageboard. Hesap yok, kayıt yok.">
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="style.css">
-  <title>VectorForge</title>
+  <title>31chan</title>
 </head>
 <body>
-<header class="topbar"><div class="brand"><span class="mark">V</span><span>VectorForge</span></div><div class="top-actions"><select id="languageSelect" aria-label="Language"><option value="tr">Türkçe</option><option value="en">English</option><option value="es">Español</option><option value="de">Deutsch</option><option value="ru">Русский</option><option value="ko">한국어</option><option value="zh">中文</option><option value="az">Azərbaycanca</option></select><div class="status" id="status" data-i18n="status">Offline-first • Local processing</div></div></header>
-<main>
-<section class="workspace">
-  <aside class="panel controls">
-    <h2 data-i18n="image">Image</h2>
-    <label class="filebox" id="dropZone"><input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif"><span data-i18n="dropImage">Drop image here</span><small data-i18n="chooseFile">or choose a file</small></label>
-    <div class="control-group">
-      <label data-i18n="brightness">Brightness <output id="brightnessOut">0</output><input id="brightness" type="range" min="-100" max="100" value="0"></label>
-      <label data-i18n="contrast">Contrast <output id="contrastOut">0</output><input id="contrast" type="range" min="-100" max="100" value="0"></label>
-      <label data-i18n="saturation">Saturation <output id="saturationOut">0</output><input id="saturation" type="range" min="-100" max="100" value="0"></label>
-      <label data-i18n="hue">Hue <output id="hueOut">0°</output><input id="hue" type="range" min="-180" max="180" value="0"></label>
-      <label data-i18n="blur">Blur <output id="blurOut">0</output><input id="blur" type="range" min="0" max="8" step="0.25" value="0"></label>
-      <label data-i18n="sharpen">Sharpen <output id="sharpenOut">0</output><input id="sharpen" type="range" min="0" max="100" value="0"></label>
-    </div>
-    <h2 data-i18n="vector">Vector</h2>
-    <div class="control-group">
-      <label data-i18n="traceEngine">Trace engine<select id="traceMode"><option value="advanced" data-i18n="advancedTrace">Advanced Trace</option><option value="max" data-i18n="maxTrace">MAX Advanced Trace</option></select></label>
-      <label data-i18n="colors">Colors <output id="colorsOut">24</output><input id="colors" type="range" min="2" max="64" value="24"></label>
-      <label data-i18n="detail">Detail <output id="detailOut">60%</output><input id="detail" type="range" min="10" max="100" value="60"></label>
-      <label data-i18n="minimumArea">Minimum area <output id="areaOut">4 px</output><input id="area" type="range" min="1" max="100" value="4"></label>
-      <label data-i18n="smoothing">Smoothing <output id="smoothOut">2</output><input id="smooth" type="range" min="0" max="8" value="2"></label>
-    </div>
-    <p class="privacy" data-i18n="traceHelp">Advanced tracing builds closed paths from color regions instead of exporting pixel rectangles. MAX mode adds higher sampling and tiny-region cleanup.</p>
-  </aside>
-
-  <section class="preview panel">
-    <div class="preview-head"><span id="fileName" data-i18n="noImage">No image selected</span><span id="dimensions">—</span></div>
-    <div class="canvas-wrap" id="canvasWrap"><canvas id="previewCanvas"></canvas><div class="empty" id="empty" data-i18n="previewHere">Your image preview appears here</div></div>
-    <div class="progress" id="progress"><span></span></div>
-  </section>
-
-  <aside class="panel controls output-panel">
-    <h2 data-i18n="output">Output</h2>
-    <label data-i18n="format">Format<select id="format"><option value="svg">SVG</option><option value="png">PNG</option><option value="json" data-i18n="colorMapJson">Color map JSON</option></select></label>
-    <div class="control-group">
-      <label data-i18n="width">Width (px)<input id="outWidth" type="number" min="1" max="20000" value="1200"></label>
-      <label data-i18n="height">Height<select id="outHeightMode"><option value="auto" data-i18n="auto">Auto</option><option value="square" data-i18n="square">Square</option></select></label>
-    </div>
-    <label class="check"><input id="printer" type="checkbox"><span><b data-i18n="printer">3D Printer Friendly</b><small data-i18n="printerHelp">Closed color regions, separate groups and print-safe cleanup</small></span></label>
-    <div id="printerOptions" class="control-group hidden">
-      <label data-i18n="minimumFeature">Minimum feature <output id="featureOut">0.8 mm</output><input id="feature" type="range" min="0.4" max="3" step="0.1" value="0.8"></label>
-      <label class="check"><input id="mergeTiny" type="checkbox" checked><span data-i18n="mergeTiny">Merge tiny regions</span></label>
-    </div>
-    <div class="color-list" id="colorList"><span data-i18n="colorsAppear">Detected colors will appear here</span></div>
-    <button id="convert" class="primary" disabled data-i18n="convert">Convert</button>
-    <button id="download" class="secondary" disabled data-i18n="download">Download</button>
-    <p class="privacy" data-i18n="privacy">🔒 Images never leave this device. Conversion happens locally in your browser.</p>
-  </aside>
-</section>
+<header class="topbar">
+  <a class="brand" href="#/">31chan</a>
+  <nav class="boardnav" id="boardNav" aria-label="Panolar"></nav>
+  <button class="link" id="themeBtn" type="button">Tema</button>
+</header>
+<main class="wrap" id="app">
+  <p class="muted">Yükleniyor…</p>
 </main>
-<script src="image-processing.js"></script>
-<script src="trace-engine.js"></script>
-<script src="svg-generator.js"></script>
-<script src="converter.js"></script>
-<script src="i18n.js"></script>
+<footer class="footer">
+  31chan anonim bir imageboard'dur. Gönderiler şu an yalnızca bu tarayıcıda saklanır; sunucu olmadığı için diğer ziyaretçiler gönderilerini göremez.
+</footer>
+<script src="store.js"></script>
 <script src="app.js"></script>
 <script>if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');</script>
 </body>

@@ -1,9 +1,9 @@
 {
-  "name":"VectorForge",
-  "short_name":"VectorForge",
-  "start_url":"./",
-  "display":"standalone",
-  "background_color":"#0b0d12",
-  "theme_color":"#0b0d12",
-  "description":"Offline image conversion and vectorization tool"
+  "name": "31chan",
+  "short_name": "31chan",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0f1012",
+  "theme_color": "#0f1012",
+  "description": "31chan - anonim imageboard"
 }
