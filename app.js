@@ -7,6 +7,8 @@
   const themeBtn = document.getElementById('themeBtn');
   const L = S.limits;
   let ownerMode = false;
+  let adminPanelOpen = false;
+  let adminData = null;
 
   /* ---------- utilities ---------- */
 
@@ -152,6 +154,55 @@
     </form>`;
   }
   /* ---------- views ---------- */
+
+  function ownerPanelHTML() {
+    if (!ownerMode || !adminPanelOpen) return '';
+    const bans = Array.isArray(adminData?.bans) ? adminData.bans : [];
+    const reports = Array.isArray(adminData?.reports) ? adminData.reports : [];
+    const logs = Array.isArray(adminData?.logs) ? adminData.logs : [];
+    const site = adminData?.site || {};
+    const suspended = Number(site.suspended_until || 0) > Math.floor(Date.now() / 1000);
+    const banRows = bans.map(b => `<li>
+      <div><b>${esc(b.ban_type)}</b> · <code>${esc(b.ban_value)}</code>
+      <span class="muted">${esc(b.reason || 'Neden belirtilmedi')}</span>
+      <small>${b.expires_at ? 'Bitiş: ' + fmtTime(Number(b.expires_at) * 1000) : 'Kalıcı'}</small></div>
+      <button type="button" class="link danger" data-action="admin-unban" data-id="${Number(b.id)}">Engeli kaldır</button>
+    </li>`).join('');
+    const reportRows = reports.map(r => `<li>
+      <div><b>#${Number(r.id)} · Gönderi #${Number(r.post_id)}</b>
+      <span>${esc(r.reason)}: ${esc(r.details || '')}</span>
+      <p class="muted">${esc(snippet(r.content || '[Gönderi silinmiş]', 180))}</p></div>
+      <button type="button" class="link" data-action="admin-resolve-report" data-id="${Number(r.id)}">Çözüldü</button>
+    </li>`).join('');
+    const logRows = logs.slice(0, 20).map(l => `<li><b>${esc(l.action)}</b> · ${esc(l.target_type)} ${esc(l.target_value)} <small>${esc(l.created_at)}</small></li>`).join('');
+    return `<section class="owner-panel">
+      <div class="owner-panel-head"><h2>Owner Paneli</h2><button type="button" class="link" data-action="admin-refresh">Verileri yenile</button></div>
+      <p class="${suspended ? 'notice' : 'muted'}">${suspended ? 'Bakım modu etkin. Bitiş: ' + fmtTime(Number(site.suspended_until) * 1000) : 'Bakım modu kapalı'}</p>
+      <div class="owner-grid">
+        <form data-admin-form="suspend_site">
+          <h3>Siteyi geçici kapat</h3>
+          <label>Süre (dakika)<input name="minutes" type="number" min="1" max="10080" value="10" required></label>
+          <label>Neden<input name="reason" maxlength="300" placeholder="İsteğe bağlı"></label>
+          <button type="submit" class="primary">Bakım modunu başlat</button>
+          <button type="button" data-action="admin-resume">Bakımı bitir</button>
+        </form>
+        <form data-admin-form="ban">
+          <h3>Kullanıcı / IP / cihaz engeli</h3>
+          <label>Engel türü<select name="ban_type"><option value="user">Kullanıcı token'ı</option><option value="ip">IP adresi</option><option value="device">Cihaz token'ı</option></select></label>
+          <label>Hedef değer<input name="ban_value" required maxlength="200" placeholder="Token, IP veya cihaz belirteci"></label>
+          <label>Süre (dakika, 0 = kalıcı)<input name="minutes" type="number" min="0" max="525600" value="0" required></label>
+          <label>Neden<input name="reason" maxlength="300" placeholder="İsteğe bağlı"></label>
+          <button type="submit" class="primary">Engelle</button>
+        </form>
+      </div>
+      <h3>Aktif engeller (${bans.length})</h3>
+      ${banRows ? '<ul class="admin-list">' + banRows + '</ul>' : '<p class="muted">Aktif engel yok.</p>'}
+      <h3>Açık raporlar (${reports.length})</h3>
+      ${reportRows ? '<ul class="admin-list">' + reportRows + '</ul>' : '<p class="muted">Açık rapor yok.</p>'}
+      <h3>Son moderasyon işlemleri</h3>
+      ${logRows ? '<ul class="admin-list">' + logRows + '</ul>' : '<p class="muted">Kayıt yok.</p>'}
+    </section>`;
+  }
 
   function homeView() {
     const st = S.stats();
@@ -313,7 +364,7 @@
         html = notFoundView();
     }
     document.title = title;
-    app.innerHTML = (ownerMode ? '<div class="own" style="font-weight:700;padding:8px 0">[Owner modu etkin]</div>' : '') + html;
+    app.innerHTML = (ownerMode ? '<div class="owner-toolbar"><b>Owner modu etkin</b><button type="button" class="link" data-action="owner-panel">' + (adminPanelOpen ? 'Paneli gizle' : 'Owner Paneli') + '</button></div>' : '') + ownerPanelHTML() + html;
 
     if (r.highlight) {
       const el = document.getElementById('p' + r.highlight);
@@ -443,12 +494,61 @@
       } catch (err) {
         alert(err.message || 'Rapor gönderilemedi.');
       }
+    } else if (action === 'owner-panel') {
+      e.preventDefault();
+      adminPanelOpen = !adminPanelOpen;
+      if (adminPanelOpen) {
+        try { adminData = await S.adminState(); }
+        catch (err) { alert(err.message || 'Owner paneli yüklenemedi.'); adminPanelOpen = false; }
+      }
+      render();
+    } else if (action === 'admin-refresh') {
+      e.preventDefault();
+      try { adminData = await S.adminState(); render(); }
+      catch (err) { alert(err.message || 'Panel yenilenemedi.'); }
+    } else if (action === 'admin-resume') {
+      e.preventDefault();
+      if (!confirm('Bakım modunu kapatmak istiyor musun?')) return;
+      try { await S.adminAction('resume_site', {}); adminData = await S.adminState(); render(); }
+      catch (err) { alert(err.message || 'İşlem başarısız.'); }
+    } else if (action === 'admin-unban') {
+      e.preventDefault();
+      if (!confirm('Bu engeli kaldırmak istiyor musun?')) return;
+      try { await S.adminAction('unban', { id: Number(el.dataset.id) }); adminData = await S.adminState(); render(); }
+      catch (err) { alert(err.message || 'Engel kaldırılamadı.'); }
+    } else if (action === 'admin-resolve-report') {
+      e.preventDefault();
+      try { await S.adminAction('resolve_report', { report_id: Number(el.dataset.id), status: 'resolved' }); adminData = await S.adminState(); render(); }
+      catch (err) { alert(err.message || 'Rapor güncellenemedi.'); }
     } else if (action === 'refresh') {
       render();
     }
   });
 
   app.addEventListener('submit', async e => {
+    const adminForm = e.target.closest('form[data-admin-form]');
+    if (adminForm) {
+      e.preventDefault();
+      const fd = new FormData(adminForm);
+      const action = adminForm.dataset.adminForm;
+      const payload = Object.fromEntries(fd.entries());
+      if (action === 'suspend_site') payload.minutes = Number(payload.minutes);
+      if (action === 'ban') {
+        payload.minutes = Number(payload.minutes);
+        payload.ban_type = String(payload.ban_type || 'user');
+      }
+      const submit = adminForm.querySelector('button[type="submit"]');
+      if (submit) submit.disabled = true;
+      try {
+        await S.adminAction(action, payload);
+        adminData = await S.adminState();
+        render();
+      } catch (err) {
+        alert(err.message || 'Owner işlemi başarısız.');
+        if (submit) submit.disabled = false;
+      }
+      return;
+    }
     const form = e.target.closest('form[data-form]');
     if (!form) return;
     e.preventDefault();
