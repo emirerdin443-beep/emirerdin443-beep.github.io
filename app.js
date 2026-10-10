@@ -176,6 +176,7 @@
       <button type="button" class="link" data-action="admin-resolve-report" data-id="${Number(r.id)}">Çözüldü</button>
     </li>`).join('');
     const logRows = logs.slice(0, 20).map(l => `<li><b>${esc(l.action)}</b> · ${esc(l.target_type)} ${esc(l.target_value)} <small>${esc(l.created_at)}</small></li>`).join('');
+    const userRows = users.slice(0, 40).map(u => `<li><div><b>${esc(u.name || 'Anonim')}</b> · <code>/${esc(u.board || 'b')}/ #${Number(u.id)}</code> <span class="muted">${u.anon ? 'ID: ' + esc(u.anon) : 'Anonim kullanıcı'}</span><small>${esc(u.created_at || '')}</small></div><button type="button" class="link danger" data-action="admin-ban-post-user" data-post-id="${Number(u.id)}">Banla</button></li>`).join('');
     return `<section class="owner-panel">
       <div class="owner-panel-head"><h2>Owner Paneli</h2><button type="button" class="link" data-action="admin-refresh">Verileri yenile</button></div>
       <p class="${suspended ? 'notice' : 'muted'}">${suspended ? 'Bakım modu etkin. Bitiş: ' + fmtTime(Number(site.suspended_until) * 1000) : 'Bakım modu kapalı'}</p>
@@ -200,12 +201,7 @@
       <h3>Aktif engeller (${bans.length})</h3>
       ${banRows ? '<ul class="admin-list">' + banRows + '</ul>' : '<p class="muted">Aktif engel yok.</p>'}
       <h3>Kullanıcılar · gönderiden engelle (${users.length})</h3>
-      ${users.length ? '<ul class="admin-list">' + users.slice(0, 40).map(u => `<li>
-        <div><b>${esc(u.name || 'Anonim')}</b> · <code>/${esc(u.board || 'b')}/ #${Number(u.id)}</code>
-        <span class="muted">${u.anon ? 'ID: ' + esc(u.anon) : 'Anonim kullanıcı'}</span>
-        <small>${esc(u.created_at || '')}</small></div>
-        <button type="button" class="link danger" data-action="admin-ban-post-user" data-post-id="${Number(u.id)}">Banla</button>
-      </li>`).join('') + '</ul>' : '<p class="muted">Ban hedefi bulunamadı.</p>'}
+      ${userRows ? '<ul class="admin-list">' + userRows + '</ul>' : '<p class="muted">Ban hedefi bulunamadı.</p>'}
       <p class="muted small">Tokenler panelde gösterilmez. Ban, seçilen gönderinin sunucudaki kullanıcı eşleşmesi üzerinden uygulanır.</p>
       <h3>Açık raporlar (${reports.length})</h3>
       ${reportRows ? '<ul class="admin-list">' + reportRows + '</ul>' : '<p class="muted">Açık rapor yok.</p>'}
