@@ -193,6 +193,7 @@
           <label>Süre (dakika, 0 = kalıcı)<input name="minutes" type="number" min="0" max="525600" value="0" required></label>
           <label>Neden<input name="reason" maxlength="300" placeholder="İsteğe bağlı"></label>
           <button type="submit" class="primary">Engelle</button>
+          <button type="button" data-action="admin-kick">Kick (10 dakika)</button>
         </form>
       </div>
       <h3>Aktif engeller (${bans.length})</h3>
@@ -511,6 +512,19 @@
       if (!confirm('Bakım modunu kapatmak istiyor musun?')) return;
       try { await S.adminAction('resume_site', {}); adminData = await S.adminState(); render(); }
       catch (err) { alert(err.message || 'İşlem başarısız.'); }
+    } else if (action === 'admin-kick') {
+      e.preventDefault();
+      const form = app.querySelector('form[data-admin-form="ban"]');
+      if (!form) return;
+      const fd = new FormData(form);
+      const value = String(fd.get('ban_value') || '').trim();
+      if (!value) { alert('Kick uygulanacak kullanıcı token değerini gir.'); return; }
+      if (!confirm('Bu kullanıcı 10 dakika uzaklaştırılsın mı?')) return;
+      try {
+        await S.adminAction('kick', { ban_value: value, minutes: 10, reason: String(fd.get('reason') || 'Kick') });
+        adminData = await S.adminState();
+        render();
+      } catch (err) { alert(err.message || 'Kick başarısız.'); }
     } else if (action === 'admin-unban') {
       e.preventDefault();
       if (!confirm('Bu engeli kaldırmak istiyor musun?')) return;
