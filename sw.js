@@ -1,5 +1,5 @@
-const CACHE = '31chan-v10';
-const ASSETS = ['./', './index.html', './style.css', './store.js?v=9', './app.js?v=10', './manifest.json'];
+const CACHE = '31chan-v11';
+const ASSETS = ['./', './index.html', './style.css', './store.js?v=10', './app.js?v=10', './manifest.json'];
 
 self.addEventListener('install', e => e.waitUntil(
   caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting())
