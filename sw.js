@@ -1,4 +1,4 @@
-const CACHE = '31chan-v1';
+const CACHE = '31chan-v2';
 const ASSETS = ['./', './index.html', './style.css', './store.js', './app.js', './manifest.json'];
 
 self.addEventListener('install', e => e.waitUntil(
@@ -18,9 +18,9 @@ self.addEventListener('fetch', e => {
     fetch(e.request)
       .then(r => {
         const copy = r.clone();
-        caches.open(CACHE).then(c => c.put(e.request, copy));
+        caches.open(CACHE).then(c => c.put(e.request, copy)).catch(() => {});
         return r;
       })
-      .catch(() => caches.match(e.request).then(x => x || caches.match('./index.html')))
+      .catch(() => caches.match(e.request).then(x => x || (e.request.mode === 'navigate' ? caches.match('./index.html') : undefined)))
   );
 });
