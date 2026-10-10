@@ -147,7 +147,6 @@
       <p class="hint">JPG, PNG, WEBP veya GIF · en fazla 8 MB · büyük görseller küçültülür.</p>
     </form>`;
   }
-
   /* ---------- views ---------- */
 
   function homeView() {
@@ -297,7 +296,6 @@
       default:
         html = notFoundView();
     }
-
     document.title = title;
     app.innerHTML = html;
 
@@ -442,6 +440,12 @@
   });
 
   window.addEventListener('hashchange', render);
+  window.addEventListener('31chan:storage', render);
+  window.addEventListener('storage', event => {
+    if (event.key === '31chan:theme' || event.key === null) {
+      applyTheme(localStorage.getItem('31chan:theme') || 'dark');
+    }
+  });
 
   /* ---------- start ---------- */
 
