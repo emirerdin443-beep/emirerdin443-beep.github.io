@@ -40,6 +40,7 @@
     let d = null;
     try { d = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { d = null; }
     if (!d || !Array.isArray(d.posts)) d = { seq: 0, posts: [] };
+    if (!Number.isSafeInteger(d.seq) || d.seq < 0) d.seq = 0;
     cache = d;
     return d;
   }
@@ -74,6 +75,22 @@
     return true;
   }
 
+  // Drop stale ownership markers after quota cleanup or thread pruning.
+  function reconcileOwn(posts) {
+    const existing = new Set(posts.map(p => p.no));
+    const own = ownSet();
+    let changed = false;
+    for (const no of own) {
+      if (!existing.has(no)) {
+        own.delete(no);
+        changed = true;
+      }
+    }
+    if (changed) {
+      try { saveOwn(own); } catch (e) { /* Ownership metadata is best-effort. */ }
+    }
+  }
+
   // Writes to localStorage; if the quota is hit, prunes old threads and retries.
   function persist(d, keep) {
     for (;;) {
@@ -95,6 +112,7 @@
     try {
       const result = fn(d);
       persist(d, keep);
+      reconcileOwn(d.posts);
       return result;
     } catch (e) {
       cache = JSON.parse(snapshot);
@@ -251,10 +269,17 @@
         ? d.posts.filter(p => p.thread !== no)
         : d.posts.filter(p => p.no !== no);
     });
-    const own = ownSet();
-    own.delete(no);
-    saveOwn(own);
+    reconcileOwn(load().posts);
   }
+
+  // Another tab may change the shared localStorage dataset. Invalidate the
+  // in-memory snapshot so the next render reads the latest saved version.
+  window.addEventListener('storage', event => {
+    if (event.key === KEY || event.key === null) {
+      cache = null;
+      window.dispatchEvent(new Event('31chan:storage'));
+    }
+  });
 
   window.ChanStore = {
     boards: () => BOARDS.slice(),
