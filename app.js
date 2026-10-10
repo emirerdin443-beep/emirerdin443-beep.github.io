@@ -269,7 +269,13 @@
 
   /* ---------- render loop ---------- */
 
-  function render() {
+  async function render() {
+    try {
+      await S.refresh();
+    } catch (err) {
+      app.innerHTML = `<section class="hero"><h1>31chan bağlantı hatası</h1><p class="muted">${esc(err.message || 'API’ye ulaşılamadı.')}</p><button type="button" data-action="refresh">Yeniden dene</button></section>`;
+      return;
+    }
     const r = parseRoute();
     renderNav(r.board ? r.board.id : null);
     let html;
@@ -370,7 +376,7 @@
 
   /* ---------- events ---------- */
 
-  app.addEventListener('click', e => {
+  app.addEventListener('click', async e => {
     const el = e.target.closest('[data-action]');
     if (!el) return;
     const action = el.dataset.action;
@@ -396,7 +402,7 @@
       const msg = 'Bu gönderiyi silmek istiyor musun?' + (isOp ? '\nKonunun tüm yanıtları da silinecek.' : '');
       if (!confirm(msg)) return;
       try {
-        S.deletePost(no);
+        await S.deletePost(no);
         render();
       } catch (err) {
         alert(err.message);
@@ -426,11 +432,11 @@
       const boardId = form.dataset.board;
 
       if (form.dataset.form === 'thread') {
-        const post = S.createThread({ board: boardId, name, subject: String(fd.get('subject') || ''), comment, image });
+        const post = await S.createThread({ board: boardId, name, subject: String(fd.get('subject') || ''), comment, image });
         location.hash = `#/${boardId}/t/${post.no}`;
       } else {
         const threadNo = Number(form.dataset.thread);
-        const post = S.createReply({ thread: threadNo, name, comment, image, sage: fd.get('sage') === 'on' });
+        const post = await S.createReply({ thread: threadNo, name, comment, image, sage: fd.get('sage') === 'on' });
         location.hash = `#/${boardId}/t/${threadNo}?p=${post.no}`; // hashchange re-renders
       }
     } catch (err) {
