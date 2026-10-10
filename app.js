@@ -110,6 +110,7 @@
     const id = p.anon ? ` <span class="pid">ID: ${esc(p.anon)}</span>` : '';
     const ownTag = own ? ' <span class="own">(Sen)</span>' : '';
     const del = own ? ` <button class="link danger" data-action="delete" data-no="${p.no}">[Sil]</button>` : '';
+    const report = ` <button class="link" data-action="report" data-no="${p.no}">[Raporla]</button>`;
     return `<article class="post ${opts.op ? 'op' : 'reply'}" id="p${p.no}">
       <header class="phead">
         <span class="pname">${esc(p.name || 'Anonim')}</span>${sage}
@@ -407,6 +408,32 @@
         render();
       } catch (err) {
         alert(err.message);
+      }
+    } else if (action === 'report') {
+      e.preventDefault();
+      const no = Number(el.dataset.no);
+      const reason = prompt('Rapor nedeni: Spam, Taciz, Kişisel bilgi, Yasa dışı içerik veya Diğer', 'Spam');
+      if (reason === null) return;
+      const normalized = reason.trim().toLocaleLowerCase('tr-TR');
+      const reasons = {
+        'spam': 'Spam',
+        'taciz': 'Taciz',
+        'kişisel bilgi': 'Kişisel bilgi',
+        'yasa dışı içerik': 'Yasa dışı içerik',
+        'diğer': 'Diğer',
+        'diger': 'Diğer'
+      };
+      const selected = reasons[normalized];
+      if (!selected) {
+        alert('Geçerli neden: Spam, Taciz, Kişisel bilgi, Yasa dışı içerik veya Diğer.');
+        return;
+      }
+      const details = prompt('Ek açıklama (isteğe bağlı, en fazla 500 karakter):', '') || '';
+      try {
+        await S.reportPost(no, selected, details);
+        alert('Rapor gönderildi. Teşekkürler.');
+      } catch (err) {
+        alert(err.message || 'Rapor gönderilemedi.');
       }
     } else if (action === 'refresh') {
       render();
