@@ -157,7 +157,7 @@
         board: board.id,
         name: clean(input.name, LIMITS.maxName) || 'Anonim',
         subject: clean(input.subject, LIMITS.maxSubject),
-        comment: clean(input.comment, LIMITS.maxComment),
+        content: clean(input.comment, LIMITS.maxComment),
         image: input.image,
         sage: false,
         owner_token: secret()
@@ -182,7 +182,7 @@
         board: thread.op.board,
         thread: thread.op.no,
         name: clean(input.name, LIMITS.maxName) || 'Anonim',
-        comment,
+        content: comment,
         image: input.image || null,
         sage: !!input.sage,
         owner_token: secret()
