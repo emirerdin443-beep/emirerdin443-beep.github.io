@@ -197,6 +197,18 @@
     return findPost(no);
   }
 
+  async function reportPost(no, reason, details) {
+    await request('/api/reports', {
+      method: 'POST',
+      body: JSON.stringify({
+        post_id: Number(no),
+        reason: String(reason || ''),
+        details: clean(details, 500),
+        reporter_token: secret()
+      })
+    });
+  }
+
   async function deletePost(no) {
     if (!isOwn(no)) throw new Error('Yalnızca bu tarayıcıdan oluşturduğun gönderileri silebilirsin.');
     await request('/api/posts/' + Number(no), {
@@ -209,6 +221,6 @@
   window.ChanStore = {
     boards: () => BOARDS.slice(),
     getBoard, listThreads, getThread, findPost, recentPosts, stats,
-    createThread, createReply, deletePost, isOwn, refresh, limits: LIMITS
+    createThread, createReply, deletePost, reportPost, isOwn, refresh, limits: LIMITS
   };
 })();
