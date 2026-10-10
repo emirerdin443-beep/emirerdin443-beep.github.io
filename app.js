@@ -171,11 +171,14 @@
           <span class="tag">/${esc(p.board)}/</span>
           <b>${esc(p.name || 'Anonim')}</b>
           <span class="muted">No.${p.no}</span>
+          ${ownerMode ? '<span class="own">[Owner]</span>' : ''}
           <span class="snip">${esc(snippet(p.comment || p.subject || '[görsel]', 120))}</span>
         </a>
+        ${ownerMode ? `<button class="link danger" data-action="delete" data-no="${p.no}">[Owner: Sil]</button>` : ''}
       </li>`).join('');
 
     return `
+      ${ownerMode ? '<p class="own" style="font-weight:700;margin:8px 0">[Owner modu etkin]</p>' : ''}
       <section class="hero">
         <h1>31chan</h1>
         <p>Anonim imageboard. Hesap yok, kayıt yok, e-posta yok.</p>
