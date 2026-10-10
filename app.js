@@ -126,25 +126,26 @@
 
   function postForm(kind, board, threadNo) {
     const isThread = kind === 'thread';
+    const isQuestionBoard = board.id === 'sc';
     const accept = 'image/png,image/jpeg,image/webp,image/gif';
     return `<form class="postform" data-form="${kind}" data-board="${board.id}" ${isThread ? '' : `data-thread="${threadNo}"`} autocomplete="off">
-      <h2>${isThread ? 'Yeni konu aç' : 'Yanıt yaz'}</h2>
+      <h2>${isThread ? (isQuestionBoard ? 'Yeni soru sor' : 'Yeni konu aç') : (isQuestionBoard ? 'Cevap yaz' : 'Yanıt yaz')}</h2>
       <div class="row">
         <label>İsim<input name="name" maxlength="${L.maxName}" placeholder="Anonim"></label>
-        ${isThread ? `<label>Konu<input name="subject" maxlength="${L.maxSubject}"></label>` : ''}
+        ${isThread ? `<label>${isQuestionBoard ? 'Soru başlığı' : 'Konu'}<input name="subject" maxlength="${L.maxSubject}" ${isQuestionBoard ? 'required' : ''}></label>` : ''}
       </div>
-      <label>Yorum<textarea name="comment" rows="${isThread ? 4 : 3}" maxlength="${L.maxComment}" ${isThread ? '' : 'id="replyComment"'}></textarea></label>
+      <label>${isQuestionBoard ? (isThread ? 'Sorunun ayrıntıları' : 'Cevabın') : 'Yorum'}<textarea name="comment" rows="${isThread ? 4 : 3}" maxlength="${L.maxComment}" ${isQuestionBoard && isThread ? 'required' : ''} ${isThread ? '' : 'id="replyComment"'}></textarea></label>
       <div class="row">
-        <label class="file">Görsel ${isThread ? '(zorunlu)' : '(isteğe bağlı)'}
-          <input type="file" name="image" accept="${accept}" ${isThread ? 'required' : ''}>
+        <label class="file">Görsel ${isThread && !isQuestionBoard ? '(zorunlu)' : '(isteğe bağlı)'}
+          <input type="file" name="image" accept="${accept}" ${isThread && !isQuestionBoard ? 'required' : ''}>
         </label>
         ${isThread ? '' : `<label class="check"><input type="checkbox" name="sage"> sage (konuyu öne çıkarma)</label>`}
       </div>
       <div class="row actions">
-        <button type="submit" class="primary">${isThread ? 'Konuyu aç' : 'Gönder'}</button>
+        <button type="submit" class="primary">${isThread ? (isQuestionBoard ? 'Soruyu gönder' : 'Konuyu aç') : (isQuestionBoard ? 'Cevabı gönder' : 'Gönder')}</button>
         <span class="form-msg" role="status"></span>
       </div>
-      <p class="hint">JPG, PNG, WEBP veya GIF · en fazla 8 MB · büyük görseller küçültülür.</p>
+      <p class="hint">${isQuestionBoard ? 'Soru başlığı ve ayrıntıları zorunludur. Görsel eklemek isteğe bağlıdır.' : 'JPG, PNG, WEBP veya GIF · en fazla 8 MB · büyük görseller küçültülür.'}</p>
     </form>`;
   }
   /* ---------- views ---------- */
@@ -209,7 +210,7 @@
             <a class="more" href="#/${board.id}/t/${t.op.no}">Konuyu aç · ${t.replies.length} yanıt</a>
           </section>`;
         }).join('')
-      : '<p class="muted">Bu panoda henüz konu yok. Aşağıdan ilk konuyu açabilirsin.</p>';
+      : `<p class="muted">Bu panoda henüz ${board.id === 'sc' ? 'soru' : 'konu'} yok. Aşağıdan ilk ${board.id === 'sc' ? 'soruyu sorabilirsin' : 'konuyu açabilirsin'}.</p>`;
 
     return `
       <div class="boardhead">
@@ -252,7 +253,7 @@
           <button class="link" type="button" data-action="refresh">Yenile</button>
         </nav>
         <h1 class="thread-title">${esc(thread.op.subject || '(konusuz)')}</h1>
-        <p class="muted">${thread.replies.length} yanıt</p>
+        <p class="muted">${thread.replies.length} ${board.id === 'sc' ? 'cevap' : 'yanıt'}</p>
       </div>
       <section class="thread full">
         ${postHTML(thread.op, { op: true })}
