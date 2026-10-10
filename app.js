@@ -233,11 +233,14 @@
     const cards = threads.map(t => {
       const img = t.op.image;
       const thumb = img && safeSrc(img.thumb);
-      return `<a class="card" href="#/${board.id}/t/${t.op.no}">
-        <div class="cthumb">${thumb ? `<img src="${thumb}" alt="" loading="lazy">` : '<span class="muted">Görsel yok</span>'}</div>
-        <div class="csub">${esc(t.op.subject || '(konusuz)')}</div>
-        <div class="cmeta">R: ${t.replies.length} · ${esc(snippet(t.op.comment, 60))}</div>
-      </a>`;
+      return `<div class="card">
+        <a href="#/${board.id}/t/${t.op.no}">
+          <div class="cthumb">${thumb ? `<img src="${thumb}" alt="" loading="lazy">` : '<span class="muted">Görsel yok</span>'}</div>
+          <div class="csub">${esc(t.op.subject || '(konusuz)')}</div>
+          <div class="cmeta">R: ${t.replies.length} · ${esc(snippet(t.op.comment, 60))}</div>
+        </a>
+        ${ownerMode ? '<span class="own">[Owner]</span> <button class="link danger" data-action="delete" data-no="' + t.op.no + '">[Owner: Sil]</button>' : ''}
+      </div>`;
     }).join('');
     return `
       <div class="boardhead">
@@ -311,7 +314,7 @@
         html = notFoundView();
     }
     document.title = title;
-    app.innerHTML = html;
+    app.innerHTML = (ownerMode ? '<div class="own" style="font-weight:700;padding:8px 0">[Owner modu etkin]</div>' : '') + html;
 
     if (r.highlight) {
       const el = document.getElementById('p' + r.highlight);
