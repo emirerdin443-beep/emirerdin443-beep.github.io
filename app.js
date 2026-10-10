@@ -176,7 +176,7 @@
       <button type="button" class="link" data-action="admin-resolve-report" data-id="${Number(r.id)}">Çözüldü</button>
     </li>`).join('');
     const logRows = logs.slice(0, 20).map(l => `<li><b>${esc(l.action)}</b> · ${esc(l.target_type)} ${esc(l.target_value)} <small>${esc(l.created_at)}</small></li>`).join('');
-    const userRows = users.slice(0, 40).map(u => `<li><div><b>${esc(u.name || 'Anonim')}</b> · <code>/${esc(u.board || 'b')}/ #${Number(u.id)}</code> <span class="muted">${u.anon ? 'ID: ' + esc(u.anon) : 'Anonim kullanıcı'}</span><small>${esc(u.created_at || '')}</small></div><button type="button" class="link danger" data-action="admin-ban-post-user" data-post-id="${Number(u.id)}">Banla</button></li>`).join('');
+    const userRows = users.slice(0, 40).map(u => `<li><div><b>${esc(u.name || 'Anonim')}</b> · <code>/${esc(u.board || 'b')}/ #${Number(u.id)}</code> <span class="muted">${u.anon ? 'ID: ' + esc(u.anon) : 'Anonim kullanıcı'}</span><small>${esc(u.created_at || '')}</small><p><small>Token: <code>${esc(u.owner_token || 'Kayıt yok')}</code></small></p><p><small>IP: <code>${esc(u.ip || 'Yeni gönderilerde kaydedilecek')}</code></small></p><p><small>Cihaz: <code>${esc(u.device_token || 'Yeni gönderilerde kaydedilecek')}</code></small></p></div><div class="row"><button type="button" class="link danger" data-action="admin-ban-identity" data-type="user" data-value="${esc(u.owner_token || '')}" ${u.owner_token ? '' : 'disabled'}>Token ile banla</button><button type="button" class="link danger" data-action="admin-ban-identity" data-type="ip" data-value="${esc(u.ip || '')}" ${u.ip ? '' : 'disabled'}>IP ile banla</button><button type="button" class="link danger" data-action="admin-ban-identity" data-type="device" data-value="${esc(u.device_token || '')}" ${u.device_token ? '' : 'disabled'}>Cihazla banla</button></div></li>`).join('');
     return `<section class="owner-panel">
       <div class="owner-panel-head"><h2>Owner Paneli</h2><button type="button" class="link" data-action="admin-refresh">Verileri yenile</button></div>
       <p class="${suspended ? 'notice' : 'muted'}">${suspended ? 'Bakım modu etkin. Bitiş: ' + fmtTime(Number(site.suspended_until) * 1000) : 'Bakım modu kapalı'}</p>
@@ -536,6 +536,18 @@
         adminData = await S.adminState();
         render();
       } catch (err) { alert(err.message || 'Kick başarısız.'); }
+    } else if (action === 'admin-ban-identity') {
+      e.preventDefault();
+      const type = el.dataset.type;
+      const value = String(el.dataset.value || '').trim();
+      if (!['user', 'ip', 'device'].includes(type) || !value) { alert('Bu hedef için kayıtlı değer yok.'); return; }
+      const duration = prompt('Ban süresi dakika olarak (0 = kalıcı):', '60');
+      if (duration === null) return;
+      if (!/^\\d+$/.test(duration.trim()) || Number(duration) > 525600) { alert('0 ile 525600 arasında dakika gir.'); return; }
+      const reason = prompt('Ban nedeni (isteğe bağlı):', 'Moderasyon') || '';
+      if (!confirm('Seçilen ' + type + ' değerini banlamak istiyor musun?')) return;
+      try { await S.adminAction('ban', { ban_type: type, ban_value: value, minutes: Number(duration), reason }); adminData = await S.adminState(); render(); }
+      catch (err) { alert(err.message || 'Ban başarısız.'); }
     } else if (action === 'admin-ban-post-user') {
       e.preventDefault();
       const postId = Number(el.dataset.postId);
