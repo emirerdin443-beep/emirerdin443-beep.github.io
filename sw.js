@@ -21,6 +21,10 @@ self.addEventListener('fetch', e => {
         caches.open(CACHE).then(c => c.put(e.request, copy)).catch(() => {});
         return r;
       })
-      .catch(() => caches.match(e.request).then(x => x || (e.request.mode === 'navigate' ? caches.match('./index.html') : undefined)))
+      .catch(() => caches.match(e.request).then(x => {
+        if (x) return x;
+        if (e.request.mode === 'navigate') return caches.match('./index.html');
+        return Response.error();
+      }))
   );
 });
