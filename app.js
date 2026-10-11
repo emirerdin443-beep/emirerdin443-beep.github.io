@@ -33,7 +33,7 @@
     document.documentElement.dataset.theme = t;
     themeBtn.textContent = t === 'dark' ? 'Açık tema' : 'Koyu tema';
   }
-  applyTheme(localStorage.getItem('31chan:theme') || 'dark');
+  applyTheme(localStorage.getItem('31chan:theme') || 'light');
   themeBtn.addEventListener('click', () => {
     const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
     localStorage.setItem('31chan:theme', next);
