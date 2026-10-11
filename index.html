@@ -1,71 +1,27 @@
 <!doctype html>
 <html lang="tr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#0b0d12">
-  <meta name="description" content="Privacy-first offline image to vector converter">
-  <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css">
-  <title>VectorForge</title>
-</head>
-<body>
-<header class="topbar"><div class="brand"><span class="mark">V</span><span>VectorForge</span></div><div class="top-actions"><select id="languageSelect" aria-label="Language"><option value="tr">Türkçe</option><option value="en">English</option><option value="es">Español</option><option value="de">Deutsch</option><option value="ru">Русский</option><option value="ko">한국어</option><option value="zh">中文</option><option value="az">Azərbaycanca</option></select><div class="status" id="status" data-i18n="status">Offline-first • Local processing</div></div></header>
-<main>
-<section class="workspace">
-  <aside class="panel controls">
-    <h2 data-i18n="image">Image</h2>
-    <label class="filebox" id="dropZone"><input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif"><span data-i18n="dropImage">Drop image here</span><small data-i18n="chooseFile">or choose a file</small></label>
-    <div class="control-group">
-      <label data-i18n="brightness">Brightness <output id="brightnessOut">0</output><input id="brightness" type="range" min="-100" max="100" value="0"></label>
-      <label data-i18n="contrast">Contrast <output id="contrastOut">0</output><input id="contrast" type="range" min="-100" max="100" value="0"></label>
-      <label data-i18n="saturation">Saturation <output id="saturationOut">0</output><input id="saturation" type="range" min="-100" max="100" value="0"></label>
-      <label data-i18n="hue">Hue <output id="hueOut">0°</output><input id="hue" type="range" min="-180" max="180" value="0"></label>
-      <label data-i18n="blur">Blur <output id="blurOut">0</output><input id="blur" type="range" min="0" max="8" step="0.25" value="0"></label>
-      <label data-i18n="sharpen">Sharpen <output id="sharpenOut">0</output><input id="sharpen" type="range" min="0" max="100" value="0"></label>
-    </div>
-    <h2 data-i18n="vector">Vector</h2>
-    <div class="control-group">
-      <label data-i18n="traceEngine">Trace engine<select id="traceMode"><option value="advanced" data-i18n="advancedTrace">Advanced Trace</option><option value="max" data-i18n="maxTrace">MAX Advanced Trace</option></select></label>
-      <label data-i18n="colors">Colors <output id="colorsOut">24</output><input id="colors" type="range" min="2" max="64" value="24"></label>
-      <label data-i18n="detail">Detail <output id="detailOut">60%</output><input id="detail" type="range" min="10" max="100" value="60"></label>
-      <label data-i18n="minimumArea">Minimum area <output id="areaOut">4 px</output><input id="area" type="range" min="1" max="100" value="4"></label>
-      <label data-i18n="smoothing">Smoothing <output id="smoothOut">2</output><input id="smooth" type="range" min="0" max="8" value="2"></label>
-    </div>
-    <p class="privacy" data-i18n="traceHelp">Advanced tracing builds closed paths from color regions instead of exporting pixel rectangles. MAX mode adds higher sampling and tiny-region cleanup.</p>
-  </aside>
-
-  <section class="preview panel">
-    <div class="preview-head"><span id="fileName" data-i18n="noImage">No image selected</span><span id="dimensions">—</span></div>
-    <div class="canvas-wrap" id="canvasWrap"><canvas id="previewCanvas"></canvas><div class="empty" id="empty" data-i18n="previewHere">Your image preview appears here</div></div>
-    <div class="progress" id="progress"><span></span></div>
-  </section>
-
-  <aside class="panel controls output-panel">
-    <h2 data-i18n="output">Output</h2>
-    <label data-i18n="format">Format<select id="format"><option value="svg">SVG</option><option value="png">PNG</option><option value="json" data-i18n="colorMapJson">Color map JSON</option></select></label>
-    <div class="control-group">
-      <label data-i18n="width">Width (px)<input id="outWidth" type="number" min="1" max="20000" value="1200"></label>
-      <label data-i18n="height">Height<select id="outHeightMode"><option value="auto" data-i18n="auto">Auto</option><option value="square" data-i18n="square">Square</option></select></label>
-    </div>
-    <label class="check"><input id="printer" type="checkbox"><span><b data-i18n="printer">3D Printer Friendly</b><small data-i18n="printerHelp">Closed color regions, separate groups and print-safe cleanup</small></span></label>
-    <div id="printerOptions" class="control-group hidden">
-      <label data-i18n="minimumFeature">Minimum feature <output id="featureOut">0.8 mm</output><input id="feature" type="range" min="0.4" max="3" step="0.1" value="0.8"></label>
-      <label class="check"><input id="mergeTiny" type="checkbox" checked><span data-i18n="mergeTiny">Merge tiny regions</span></label>
-    </div>
-    <div class="color-list" id="colorList"><span data-i18n="colorsAppear">Detected colors will appear here</span></div>
-    <button id="convert" class="primary" disabled data-i18n="convert">Convert</button>
-    <button id="download" class="secondary" disabled data-i18n="download">Download</button>
-    <p class="privacy" data-i18n="privacy">🔒 Images never leave this device. Conversion happens locally in your browser.</p>
-  </aside>
-</section>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#111827"><title>Chatroom</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,sans-serif;background:#0b1020;color:#e5e7eb}*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:18px;background:radial-gradient(ellipse at top,#1e293b,#0b1020 65%)}main{width:min(760px,100%);background:#111827;border:1px solid #334155;border-radius:18px;overflow:hidden;box-shadow:0 24px 80px #0006}.top{padding:22px 24px;border-bottom:1px solid #334155;display:flex;justify-content:space-between;align-items:center;gap:12px}.top h1{font-size:1.25rem;margin:0}.muted{color:#94a3b8;font-size:.9rem}.panel{padding:22px}label{display:block;color:#cbd5e1;font-size:.9rem;margin-bottom:8px}input,button{font:inherit;border-radius:10px;padding:12px;border:1px solid #475569}input{width:100%;background:#0b1220;color:#f8fafc;margin-bottom:12px}button{cursor:pointer;background:#2563eb;border-color:#2563eb;color:white;font-weight:650}button:disabled{opacity:.5;cursor:not-allowed}.secondary{background:#1f2937;border-color:#475569}.row{display:flex;gap:10px}.row input{flex:1;min-width:0}.hidden{display:none!important}#messages{height:min(54vh,480px);min-height:220px;overflow:auto;padding:14px;background:#0b1220;border:1px solid #334155;border-radius:12px;display:flex;flex-direction:column;gap:10px}.msg{padding:10px 12px;border-radius:10px;background:#172033;overflow-wrap:anywhere}.meta{display:flex;justify-content:space-between;gap:10px;font-size:.78rem;color:#94a3b8;margin-bottom:5px}.body{white-space:pre-wrap}.status{min-height:1.3em;color:#93c5fd;font-size:.88rem;margin:10px 0 0}.composer{margin-top:12px}.foot{padding:0 22px 18px;color:#94a3b8;font-size:.8rem}.danger{color:#fca5a5}button:focus-visible,input:focus-visible{outline:2px solid #60a5fa;outline-offset:2px}@media(max-width:520px){.top,.panel{padding:16px}.row{flex-direction:column}.row button{width:100%}}
+</style></head>
+<body><main>
+<header class="top"><div><h1>Chatroom</h1><div class="muted">Özel sohbet odası</div></div><button id="logout" class="secondary hidden">Çıkış</button></header>
+<section id="login" class="panel"><h2>Odaya giriş</h2><label for="password">Oda şifresi</label><input id="password" type="password" inputmode="numeric" autocomplete="current-password" maxlength="128" placeholder="Şifreyi gir"><button id="loginBtn">Giriş yap</button><p id="loginStatus" class="status" role="status"></p></section>
+<section id="room" class="panel hidden"><div class="row" style="margin-bottom:12px"><div style="flex:1"><label for="nickname">Görünen ad</label><input id="nickname" maxlength="24" autocomplete="nickname" placeholder="Adın"></div></div><div id="messages" aria-live="polite"></div><form id="sendForm" class="composer"><label for="message">Mesaj</label><div class="row"><input id="message" maxlength="1000" autocomplete="off" placeholder="Mesaj yaz..." required><button id="sendBtn">Gönder</button></div></form><p id="roomStatus" class="status" role="status"></p></section>
+<footer class="foot">Mesajlar sunucudaki veritabanında saklanır. Özel şifreyi yalnızca güvendiğin kişilerle paylaş.</footer>
 </main>
-<script src="image-processing.js"></script>
-<script src="trace-engine.js"></script>
-<script src="svg-generator.js"></script>
-<script src="converter.js"></script>
-<script src="i18n.js"></script>
-<script src="app.js"></script>
-<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');</script>
-</body>
-</html>
+<script>
+const API="https://chatroom-api.emirerdin443.workers.dev";
+const $=id=>document.getElementById(id);let token=localStorage.getItem("chatroom-session"),poller=null,lastId=0;
+async function api(path,opts={}){const headers={"Content-Type":"application/json",...(token?{Authorization:"Bearer "+token}:{}),...(opts.headers||{})};const r=await fetch(API+path,{...opts,headers});let data={};try{data=await r.json()}catch{}if(!r.ok)throw new Error(data.error||"İstek başarısız ("+r.status+")");return data}
+function setStatus(id,msg,error=false){$(id).textContent=msg;$(id).classList.toggle("danger",error)}
+function showRoom(){ $("login").classList.add("hidden");$("room").classList.remove("hidden");$("logout").classList.remove("hidden");loadMessages();if(poller)clearInterval(poller);poller=setInterval(loadMessages,4000)}
+function showLogin(){if(poller)clearInterval(poller);$("room").classList.add("hidden");$("logout").classList.add("hidden");$("login").classList.remove("hidden")}
+async function login(){const password=$("password").value;if(!password){setStatus("loginStatus","Şifreyi gir.",true);return} $("loginBtn").disabled=true;setStatus("loginStatus","Kontrol ediliyor…");try{const d=await api("/api/login",{method:"POST",body:JSON.stringify({password})});token=d.token;localStorage.setItem("chatroom-session",token);$("password").value="";setStatus("loginStatus","");showRoom()}catch(e){setStatus("loginStatus",e.message,true)}finally{$("loginBtn").disabled=false}}
+async function loadMessages(){try{const d=await api("/api/messages");const box=$("messages");const oldScroll=box.scrollTop+box.clientHeight>=box.scrollHeight-30;for(const m of d.messages){if(m.id<=lastId)continue;const item=document.createElement("article");item.className="msg";const meta=document.createElement("div");meta.className="meta";const who=document.createElement("strong");who.textContent=m.name;const when=document.createElement("span");when.textContent=new Date(m.created_at.replace(" ","T")+"Z").toLocaleString();meta.append(who,when);const body=document.createElement("div");body.className="body";body.textContent=m.body;item.append(meta,body);box.append(item);lastId=Math.max(lastId,m.id)}while(box.children.length>150)box.removeChild(box.firstChild);if(oldScroll)box.scrollTop=box.scrollHeight;setStatus("roomStatus","Bağlı")}catch(e){if(/session|unauthorized|expired/i.test(e.message)){token=null;localStorage.removeItem("chatroom-session");showLogin()}setStatus("roomStatus",e.message,true)}}
+$("loginBtn").addEventListener("click",login);$("password").addEventListener("keydown",e=>{if(e.key==="Enter")login()});$("logout").addEventListener("click",()=>{token=null;localStorage.removeItem("chatroom-session");lastId=0;$("messages").replaceChildren();showLogin()});
+$("sendForm").addEventListener("submit",async e=>{e.preventDefault();const body=$("message").value.trim(),name=$("nickname").value.trim()||"Misafir";if(!body)return;$("sendBtn").disabled=true;try{await api("/api/messages",{method:"POST",body:JSON.stringify({name,body})});$("message").value="";await loadMessages();$("message").focus()}catch(e){setStatus("roomStatus",e.message,true)}finally{$("sendBtn").disabled=false}});
+if(token)showRoom();
+</script></body></html>
