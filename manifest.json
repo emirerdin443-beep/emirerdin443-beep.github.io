@@ -3,7 +3,7 @@
   "short_name": "31chan",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#0f1012",
-  "theme_color": "#0f1012",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
   "description": "31chan - anonim imageboard"
 }
