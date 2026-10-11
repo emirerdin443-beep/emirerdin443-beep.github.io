@@ -233,6 +233,7 @@
       })
     });
     if (!result.ok || !result.id) throw new Error('Özel yanıt gönderilemedi.');
+    rememberOwn(Number(result.id));
     await refresh();
     return findPost(Number(result.id));
   }
