@@ -45,4 +45,4 @@ Depolama alanı dolunca (≈5 MB) en eski konular otomatik silinir. Konu başın
 
 ## Lisans
 
-MIT
+Bu proje [MIT Lisansı](LICENSE) altında yayımlanır. Lisans koşulları için `LICENSE` dosyasına bakın.
