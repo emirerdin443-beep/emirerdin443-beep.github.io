@@ -202,7 +202,7 @@
       ${banRows ? '<ul class="admin-list">' + banRows + '</ul>' : '<p class="muted">Aktif engel yok.</p>'}
       <h3>Kullanıcılar · gönderiden engelle (${users.length})</h3>
       ${userRows ? '<ul class="admin-list">' + userRows + '</ul>' : '<p class="muted">Ban hedefi bulunamadı.</p>'}
-      <p class="muted small">Tokenler panelde gösterilmez. Ban, seçilen gönderinin sunucudaki kullanıcı eşleşmesi üzerinden uygulanır.</p>
+      <p class="muted small">IP ve cihaz bilgileri yalnızca bu sürümle kaydedilen yeni gönderilerde bulunur; eski gönderilerde boş olabilir.</p>
       <h3>Açık raporlar (${reports.length})</h3>
       ${reportRows ? '<ul class="admin-list">' + reportRows + '</ul>' : '<p class="muted">Açık rapor yok.</p>'}
       <h3>Son moderasyon işlemleri</h3>
@@ -543,7 +543,7 @@
       if (!['user', 'ip', 'device'].includes(type) || !value) { alert('Bu hedef için kayıtlı değer yok.'); return; }
       const duration = prompt('Ban süresi dakika olarak (0 = kalıcı):', '60');
       if (duration === null) return;
-      if (!/^\\d+$/.test(duration.trim()) || Number(duration) > 525600) { alert('0 ile 525600 arasında dakika gir.'); return; }
+      if (!/^[0-9]+$/.test(duration.trim()) || Number(duration) > 525600) { alert('0 ile 525600 arasında dakika gir.'); return; }
       const reason = prompt('Ban nedeni (isteğe bağlı):', 'Moderasyon') || '';
       if (!confirm('Seçilen ' + type + ' değerini banlamak istiyor musun?')) return;
       try { await S.adminAction('ban', { ban_type: type, ban_value: value, minutes: Number(duration), reason }); adminData = await S.adminState(); render(); }
@@ -553,7 +553,7 @@
       const postId = Number(el.dataset.postId);
       const duration = prompt('Ban süresi dakika olarak (0 = kalıcı):', '60');
       if (duration === null) return;
-      if (!/^\\d+$/.test(duration.trim()) || Number(duration) > 525600) { alert('0 ile 525600 arasında dakika gir.'); return; }
+      if (!/^[0-9]+$/.test(duration.trim()) || Number(duration) > 525600) { alert('0 ile 525600 arasında dakika gir.'); return; }
       const reason = prompt('Ban nedeni (isteğe bağlı):', 'Moderasyon') || '';
       if (!confirm('Bu gönderinin yazarı banlansın mı?')) return;
       try {
