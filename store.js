@@ -93,7 +93,10 @@
       image,
       sage: !!row.sage,
       anon: String(row.anon || ''),
-      time: Number.isFinite(time) ? time : Date.now()
+      time: Number.isFinite(time) ? time : Date.now(),
+      userId: String(row.user_id || ''),
+      isPrivate: !!row.is_private,
+      recipientUserId: String(row.recipient_user_id || '')
     };
   }
 
@@ -103,6 +106,7 @@
       headers: {
         'Content-Type': 'application/json',
         'X-Device-Token': deviceToken(),
+        'X-User-Token': secret(),
         ...(options.headers || {})
       }
     });
@@ -213,6 +217,26 @@
     return findPost(no);
   }
 
+  async function createPrivateReply(input) {
+    const comment = clean(input.comment, LIMITS.maxComment);
+    if (!comment && !input.image) throw new Error('Yanıt metni veya görsel ekleyin.');
+    if (!/^[a-f0-9]{16}$/.test(String(input.userId || ''))) throw new Error('Kullanıcı kimliği geçersiz.');
+    const result = await request('/api/posts', {
+      method: 'POST',
+      body: JSON.stringify({
+        board: 'c',
+        private_to_user_id: input.userId,
+        name: clean(input.name, LIMITS.maxName) || 'Anonim',
+        content: comment,
+        image: input.image || null,
+        owner_token: secret()
+      })
+    });
+    if (!result.ok || !result.id) throw new Error('Özel yanıt gönderilemedi.');
+    await refresh();
+    return findPost(Number(result.id));
+  }
+
   async function reportPost(no, reason, details) {
     await request('/api/reports', {
       method: 'POST',
@@ -257,6 +281,6 @@
   window.ChanStore = {
     boards: () => BOARDS.slice(),
     getBoard, listThreads, getThread, findPost, recentPosts, stats,
-    createThread, createReply, deletePost, reportPost, isOwn, checkOwner, refresh, adminState, adminAction, limits: LIMITS
+    createThread, createReply, createPrivateReply, deletePost, reportPost, isOwn, checkOwner, refresh, adminState, adminAction, limits: LIMITS
   };
 })();
