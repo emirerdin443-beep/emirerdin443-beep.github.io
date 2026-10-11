@@ -116,7 +116,7 @@
     const adminTag = '';
     const report = ` <button class="link" data-action="report" data-no="${p.no}">[Raporla]</button>`;
     const privateTag = p.isPrivate ? ' <span class="sage">Özel yanıt</span>' : '';
-    const replyUser = p.userId && !own ? ` <button class="link" data-action="reply-user" data-no="${p.no}" data-user-id="${esc(p.userId)}" data-name="${esc(p.name || 'Anonim')}">[Kullanıcıya yanıtla]</button>` : '';
+    const replyUser = p.board === 'c' && p.userId && !own ? ` <button class="link" data-action="reply-user" data-no="${p.no}" data-user-id="${esc(p.userId)}" data-name="${esc(p.name || 'Anonim')}">[Kullanıcıya yanıtla]</button>` : '';
     return `<article class="post ${opts.op ? 'op' : 'reply'}" id="p${p.no}">
       <header class="phead">
         <span class="pname">${esc(p.name || 'Anonim')}</span>${sage}${privateTag}
