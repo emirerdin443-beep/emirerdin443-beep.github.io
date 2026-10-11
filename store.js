@@ -102,6 +102,7 @@
       headers: {
         'Content-Type': 'application/json',
         'X-Device-Token': deviceToken(),
+        'X-Owner-Token': secret(),
         ...(options.headers || {})
       }
     });
