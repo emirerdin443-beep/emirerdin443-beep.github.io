@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#0f1012">
+  <meta name="theme-color" content="#ffffff">
   <meta name="description" content="31chan - anonim imageboard. Hesap yok, kayıt yok.">
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="style.css">
@@ -15,6 +15,7 @@
   <button class="link" id="ownerRefreshBtn" type="button" title="Token değiştikten sonra Owner yetkisini yeniden kontrol et">Yetkiyi yenile</button>
   <button class="link" id="devtoolsBtn" type="button" title="Eruda DevTools">DevTools</button>
   <nav class="boardnav" id="boardNav" aria-label="Panolar"></nav>
+  <label class="language-picker"><span data-i18n="Dil">Dil</span><select id="languageSelect" aria-label="Dil"><option value="tr">Türkçe</option><option value="en">English</option><option value="ru">Русский</option><option value="es">Español</option><option value="az">Azərbaycanca</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="zh">中文</option></select></label>
   <button class="link" id="themeBtn" type="button">Tema</button>
 </header>
 <main class="wrap" id="app">
@@ -47,8 +48,9 @@
     });
   })();
   </script>
-  <script src="store.js?v=13"></script>
-<script src="app.js?v=14"></script>
-<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=16', { updateViaCache: 'none' });</script>
+  <script src="i18n.js?v=1"></script>
+<script src="store.js?v=13"></script>
+<script src="app.js?v=15"></script>
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js?v=17', { updateViaCache: 'none' });</script>
 </body>
 </html>
