@@ -115,11 +115,13 @@
     const del = (own || ownerMode) ? ` <button class="link danger" data-action="delete" data-no="${p.no}">${ownerMode && !own ? '[Sil]' : '[Sil]'}</button>` : '';
     const adminTag = '';
     const report = ` <button class="link" data-action="report" data-no="${p.no}">[Raporla]</button>`;
+    const privateTag = p.isPrivate ? ' <span class="sage">Özel yanıt</span>' : '';
+    const replyUser = p.userId && !own ? ` <button class="link" data-action="reply-user" data-no="${p.no}" data-user-id="${esc(p.userId)}" data-name="${esc(p.name || 'Anonim')}">[Kullanıcıya yanıtla]</button>` : '';
     return `<article class="post ${opts.op ? 'op' : 'reply'}" id="p${p.no}">
       <header class="phead">
-        <span class="pname">${esc(p.name || 'Anonim')}</span>${sage}
+        <span class="pname">${esc(p.name || 'Anonim')}</span>${sage}${privateTag}
         <time>${fmtTime(p.time)}</time>${id}
-        <a class="pno" href="#/${esc(p.board)}/t/${p.thread}?p=${p.no}" data-action="reply" data-no="${p.no}">No.${p.no}</a>${ownTag}${adminTag}${del}
+        <a class="pno" href="#/${esc(p.board)}/t/${p.thread}?p=${p.no}" data-action="reply" data-no="${p.no}">No.${p.no}</a>${ownTag}${adminTag}${del}${replyUser}
       </header>
       ${subject}
       <div class="pbody">
@@ -455,7 +457,27 @@
     if (!el) return;
     const action = el.dataset.action;
 
-    if (action === 'reply') {
+    if (action === 'reply-user') {
+      e.preventDefault();
+      const target = S.findPost(Number(el.dataset.no));
+      const userId = String(el.dataset.userId || '');
+      if (!target || !userId) { alert('Bu kullanıcının yanıtlanabilir kimliği yok.'); return; }
+      const kind = prompt('Yanıt türü: 1 = herkese açık, 2 = yalnızca bu kullanıcıya özel', '1');
+      if (kind === null) return;
+      if (kind.trim() !== '1' && kind.trim() !== '2') { alert('1 veya 2 seç.'); return; }
+      const comment = prompt(kind.trim() === '2' ? 'Özel yanıt (yalnızca sen ve hedef kullanıcı görebilirsiniz):' : 'Herkese açık yanıt:');
+      if (comment === null || !comment.trim()) return;
+      try {
+        if (kind.trim() === '2') {
+          await S.createPrivateReply({ userId, name: '', comment });
+        } else if (!target.isPrivate) {
+          await S.createReply({ thread: target.thread, name: '', comment, image: null, sage: false });
+        } else {
+          await S.createThread({ board: 'c', name: '', subject: '', comment, image: null });
+        }
+        await render();
+      } catch (err) { alert(err.message || 'Yanıt gönderilemedi.'); }
+    } else if (action === 'reply') {
       const ta = document.getElementById('replyComment');
       if (ta) {
         e.preventDefault();
