@@ -17,7 +17,8 @@
     { id: 'm', name: 'Müzik', desc: 'Dinlediğin, yaptığın, önerdiğin.' },
     { id: 'a', name: 'Sanat', desc: 'Çizim, fotoğraf ve dijital işler.' },
     { id: 'sc', name: 'Soru Cevap', desc: 'Sorularını sor, topluluktan cevap al.' },
-    { id: 'c', name: 'Sohbet', desc: 'Konu başlığı yok. Mesaj bırak, birbirinize yanıt verin.' }
+    { id: 'c', name: 'Sohbet', desc: 'Konu başlığı yok. Mesaj bırak, birbirinize yanıt verin.' },
+    { id: 'h', name: 'Korku', desc: 'Korku hikâyeleri, ürkütücü kurgu ve grafik olmayan korku içerikleri.' }
   ];
   const LIMITS = {
     threadsPerBoard: 100,
@@ -171,7 +172,7 @@
   async function createThread(input) {
     const board = getBoard(input.board);
     if (!board) throw new Error('Pano bulunamadı.');
-    if (board.id !== 'sc' && board.id !== 'c' && !input.image) throw new Error('Yeni konu için bir görsel ekleyin.');
+    if (board.id !== 'sc' && board.id !== 'c' && board.id !== 'h' && !input.image) throw new Error('Yeni konu için bir görsel ekleyin.');
     if (board.id === 'sc' && !clean(input.comment, LIMITS.maxComment)) throw new Error('Sorunun ayrıntılarını yazın.');
     const result = await request('/api/posts', {
       method: 'POST',
