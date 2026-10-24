@@ -135,6 +135,7 @@
     const isThread = kind === 'thread';
     const isQuestionBoard = board.id === 'sc';
     const isChatBoard = board.id === 'c';
+    const isHorrorBoard = board.id === 'h';
     const accept = 'image/png,image/jpeg,image/webp,image/gif';
     return `<form class="postform" data-form="${kind}" data-board="${board.id}" ${isThread ? '' : `data-thread="${threadNo}"`} autocomplete="off">
       <h2>${isThread ? (isChatBoard ? 'Yeni mesaj gönder' : isQuestionBoard ? 'Yeni soru sor' : 'Yeni konu aç') : (isChatBoard ? 'Mesaja cevap yaz' : isQuestionBoard ? 'Cevap yaz' : 'Yanıt yaz')}</h2>
@@ -144,8 +145,8 @@
       </div>
       <label>${isChatBoard ? (isThread ? 'Mesaj' : 'Yanıtın') : isQuestionBoard ? (isThread ? 'Sorunun ayrıntıları' : 'Cevabın') : 'Yorum'}<textarea name="comment" rows="${isThread ? 4 : 3}" maxlength="${L.maxComment}" ${isQuestionBoard && isThread ? 'required' : ''} ${isThread ? '' : 'id="replyComment"'}></textarea></label>
       <div class="row">
-        <label class="file">Görsel ${isThread && !isQuestionBoard && !isChatBoard ? '(zorunlu)' : '(isteğe bağlı)'}
-          <input type="file" name="image" accept="${accept}" ${isThread && !isQuestionBoard && !isChatBoard ? 'required' : ''}>
+        <label class="file">Görsel ${isThread && !isQuestionBoard && !isChatBoard && !isHorrorBoard ? '(zorunlu)' : '(isteğe bağlı)'}
+          <input type="file" name="image" accept="${accept}" ${isThread && !isQuestionBoard && !isChatBoard && !isHorrorBoard ? 'required' : ''}>
         </label>
         ${isThread ? '' : `<label class="check"><input type="checkbox" name="sage"> sage (konuyu öne çıkarma)</label>`}
       </div>
