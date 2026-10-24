@@ -114,14 +114,15 @@
     const ownTag = own ? ' <span class="own">(Sen)</span>' : '';
     const del = (own || ownerMode) ? ` <button class="link danger" data-action="delete" data-no="${p.no}">${ownerMode && !own ? '[Sil]' : '[Sil]'}</button>` : '';
     const adminTag = '';
-    const report = ` <button class="link" data-action="report" data-no="${p.no}">[Raporla]</button>`;
+    const report = ` <button class="link" data-action="report" data-no="${p.no}">[Gönderiyi Raporla]</button>`;
+    const reportUser = !own ? ` <button class="link danger" data-action="report-user" data-no="${p.no}" data-name="${esc(p.name || 'Anonim')}">[Kullanıcıyı Raporla]</button>` : '';
     const privateTag = p.isPrivate ? ' <span class="sage">Özel yanıt</span>' : '';
     const replyUser = p.board === 'c' && p.userId && !own ? ` <button class="link" data-action="reply-user" data-no="${p.no}" data-user-id="${esc(p.userId)}" data-name="${esc(p.name || 'Anonim')}">[Kullanıcıya yanıtla]</button>` : '';
     return `<article class="post ${opts.op ? 'op' : 'reply'}" id="p${p.no}">
       <header class="phead">
         <span class="pname">${esc(p.name || 'Anonim')}</span>${sage}${privateTag}
         <time>${fmtTime(p.time)}</time>${id}
-        <a class="pno" href="#/${esc(p.board)}/t/${p.thread}?p=${p.no}" data-action="reply" data-no="${p.no}">No.${p.no}</a>${ownTag}${adminTag}${del}${replyUser}
+        <a class="pno" href="#/${esc(p.board)}/t/${p.thread}?p=${p.no}" data-action="reply" data-no="${p.no}">No.${p.no}</a>${ownTag}${adminTag}${del}${reportUser}${report}${replyUser}
       </header>
       ${subject}
       <div class="pbody">
@@ -504,6 +505,34 @@
         render();
       } catch (err) {
         alert(err.message);
+      }
+    } else if (action === 'report-user') {
+      e.preventDefault();
+      const no = Number(el.dataset.no);
+      const target = S.findPost(no);
+      if (!target || S.isOwn(no)) { alert('Bu kullanıcı raporlanamaz.'); return; }
+      const reason = prompt('Kullanıcıyı raporlama nedeni: Spam, Taciz, Kişisel bilgi, Yasa dışı içerik veya Diğer', 'Taciz');
+      if (reason === null) return;
+      const normalized = reason.trim().toLocaleLowerCase('tr-TR');
+      const reasons = {
+        'spam': 'Spam',
+        'taciz': 'Taciz',
+        'kişisel bilgi': 'Kişisel bilgi',
+        'yasa dışı içerik': 'Yasa dışı içerik',
+        'diğer': 'Diğer',
+        'diger': 'Diğer'
+      };
+      const selected = reasons[normalized];
+      if (!selected) {
+        alert('Geçerli neden: Spam, Taciz, Kişisel bilgi, Yasa dışı içerik veya Diğer.');
+        return;
+      }
+      const details = prompt('Kullanıcı raporu için ek açıklama (isteğe bağlı, en fazla 500 karakter):', '') || '';
+      try {
+        await S.reportPost(no, selected, '[KULLANICI RAPORU] ' + details);
+        alert('Kullanıcı raporu gönderildi. Moderatör raporu inceleyebilir.');
+      } catch (err) {
+        alert(err.message || 'Kullanıcı raporu gönderilemedi.');
       }
     } else if (action === 'report') {
       e.preventDefault();
