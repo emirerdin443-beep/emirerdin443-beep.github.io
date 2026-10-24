@@ -176,7 +176,8 @@
       <div><b>#${Number(r.id)} · Gönderi #${Number(r.post_id)}</b>
       <span>${esc(r.reason)}: ${esc(r.details || '')}</span>
       <p class="muted">${esc(snippet(r.content || '[Gönderi silinmiş]', 180))}</p></div>
-      <button type="button" class="link" data-action="admin-resolve-report" data-id="${Number(r.id)}">Çözüldü</button>
+      <div class="row"><button type="button" class="link" data-action="admin-report-approve" data-id="${Number(r.id)}" data-post-id="${Number(r.post_id)}" data-reason="${esc(r.reason || 'Moderasyon')}" >Onayla</button>
+      <button type="button" class="link" data-action="admin-report-reject" data-id="${Number(r.id)}">Reddet</button></div>
     </li>`).join('');
     const logRows = logs.slice(0, 20).map(l => `<li><b>${esc(l.action)}</b> · ${esc(l.target_type)} ${esc(l.target_value)} <small>${esc(l.created_at)}</small></li>`).join('');
     const userRows = users.slice(0, 40).map(u => `<li><div><b>${esc(u.name || 'Anonim')}</b> · <code>/${esc(u.board || 'b')}/ #${Number(u.id)}</code> <span class="muted">${u.anon ? 'ID: ' + esc(u.anon) : 'Anonim kullanıcı'}</span><small>${esc(u.created_at || '')}</small><p><small>Token: <code>${esc(u.owner_token || 'Kayıt yok')}</code></small></p><p><small>IP: <code>${esc(u.ip || 'Yeni gönderilerde kaydedilecek')}</code></small></p><p><small>Cihaz: <code>${esc(u.device_token || 'Yeni gönderilerde kaydedilecek')}</code></small></p></div><div class="row"><button type="button" class="link danger" data-action="admin-ban-identity" data-type="user" data-value="${esc(u.owner_token || '')}" ${u.owner_token ? '' : 'disabled'}>Token ile banla</button><button type="button" class="link danger" data-action="admin-ban-identity" data-type="ip" data-value="${esc(u.ip || '')}" ${u.ip ? '' : 'disabled'}>IP ile banla</button><button type="button" class="link danger" data-action="admin-ban-identity" data-type="device" data-value="${esc(u.device_token || '')}" ${u.device_token ? '' : 'disabled'}>Cihazla banla</button></div></li>`).join('');
@@ -206,7 +207,7 @@
       <h3>Kullanıcılar · gönderiden engelle (${users.length})</h3>
       ${userRows ? '<ul class="admin-list">' + userRows + '</ul>' : '<p class="muted">Ban hedefi bulunamadı.</p>'}
       <p class="muted small">IP ve cihaz bilgileri yalnızca bu sürümle kaydedilen yeni gönderilerde bulunur; eski gönderilerde boş olabilir.</p>
-      <h3>Açık raporlar (${reports.length})</h3>
+      <h3>Onay bekleyen raporlar (${reports.length})</h3>
       ${reportRows ? '<ul class="admin-list">' + reportRows + '</ul>' : '<p class="muted">Açık rapor yok.</p>'}
       <h3>Son moderasyon işlemleri</h3>
       ${logRows ? '<ul class="admin-list">' + logRows + '</ul>' : '<p class="muted">Kayıt yok.</p>'}
@@ -589,6 +590,27 @@
       if (!confirm('Bu engeli kaldırmak istiyor musun?')) return;
       try { await S.adminAction('unban', { id: Number(el.dataset.id) }); adminData = await S.adminState(); render(); }
       catch (err) { alert(err.message || 'Engel kaldırılamadı.'); }
+    } else if (action === 'admin-report-reject') {
+      e.preventDefault();
+      if (!confirm('Raporu reddet? Kullanıcıya herhangi bir ceza uygulanmaz.')) return;
+      try {
+        await S.adminAction('resolve_report', { report_id: Number(el.dataset.id), status: 'dismissed', reason: 'Owner raporu reddetti' });
+        adminData = await S.adminState(); render();
+      } catch (err) { alert(err.message || 'Rapor reddedilemedi.'); }
+    } else if (action === 'admin-report-approve') {
+      e.preventDefault();
+      const choice = prompt('Onaylandı. Ceza seç: 1 = Kick (10 dakika), 2 = Kalıcı ban', '1');
+      if (choice === null) return;
+      if (!['1','2'].includes(choice.trim())) { alert('1 veya 2 seç.'); return; }
+      const postId = Number(el.dataset.postId);
+      const minutes = choice.trim() === '1' ? 10 : 0;
+      const reason = 'Rapor onaylandı: ' + String(el.dataset.reason || 'Moderasyon');
+      if (!confirm(choice.trim() === '1' ? 'Gönderi sahibine 10 dakika Kick uygulansın mı?' : 'Gönderi sahibine kalıcı ban uygulansın mı?')) return;
+      try {
+        await S.adminAction('ban_user_by_post', { post_id: postId, minutes, reason });
+        await S.adminAction('resolve_report', { report_id: Number(el.dataset.id), status: 'resolved', reason });
+        adminData = await S.adminState(); render();
+      } catch (err) { alert(err.message || 'Rapor onaylanamadı. Kullanıcı tokeni bulunamayabilir.'); }
     } else if (action === 'admin-resolve-report') {
       e.preventDefault();
       try { await S.adminAction('resolve_report', { report_id: Number(el.dataset.id), status: 'resolved' }); adminData = await S.adminState(); render(); }
@@ -653,6 +675,23 @@
       btn.disabled = false;
     }
   });
+
+  // Poll for new posts without interrupting someone who is typing.
+  window.setInterval(async () => {
+    if (document.hidden || app.querySelector('textarea:focus, input:focus')) return;
+    try {
+      const before = S.recentPosts(1).map(p => `${p.no}:${p.time}`).join('|');
+      await S.refresh();
+      const after = S.recentPosts(1).map(p => `${p.no}:${p.time}`).join('|');
+      if (before !== after) {
+        if (ownerMode && adminPanelOpen) adminData = await S.adminState();
+        await render();
+      } else if (ownerMode && adminPanelOpen) {
+        adminData = await S.adminState();
+        await render();
+      }
+    } catch (e) { /* next polling cycle retries */ }
+  }, 20000);
 
   window.addEventListener('hashchange', render);
   window.addEventListener('31chan:storage', render);
