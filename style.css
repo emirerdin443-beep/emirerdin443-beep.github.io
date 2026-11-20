@@ -357,3 +357,5 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .boardcard, .post, .postform, .card, .owner-panel, .owner-grid form, .admin-list li {
   box-shadow: none;
 }
+
+.owner-grid form input { min-width:0; }
