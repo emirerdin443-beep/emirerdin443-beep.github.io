@@ -760,7 +760,7 @@
     }
   });
 
-  // Re-check Owner permissions after the secret token was changed in DevTools.
+  // Re-check Owner permissions; allow re-login if this browser has no valid token.
   const ownerRefreshBtn = document.getElementById('ownerRefreshBtn');
   if (ownerRefreshBtn) {
     ownerRefreshBtn.addEventListener('click', async () => {
@@ -768,8 +768,22 @@
       const originalText = ownerRefreshBtn.textContent;
       ownerRefreshBtn.textContent = 'Kontrol ediliyor…';
       try {
+        if (!ownerMode) {
+          const token = prompt('Cloudflare Worker ayarlarındaki OWNER_TOKEN Secret değerini gir:');
+          if (token) {
+            const valid = await S.checkOwner(token);
+            if (!valid) {
+              alert('OWNER_TOKEN geçersiz. Owner yetkisi doğrulanamadı.');
+              return;
+            }
+          } else {
+            return;
+          }
+        }
         await render();
         ownerRefreshBtn.textContent = ownerMode ? 'Owner etkin' : 'Yetki yok';
+      } catch (error) {
+        alert(error.message || 'Owner doğrulaması başarısız.');
       } finally {
         ownerRefreshBtn.disabled = false;
         window.setTimeout(() => { ownerRefreshBtn.textContent = originalText; }, 1800);
