@@ -10,7 +10,7 @@
   const OWN_KEY = '31chan:own:v1';
   const SECRET_KEY = '31chan:secret:v1';
   const DEVICE_KEY = '31chan:device:v1';
-  const BOARDS = [
+  let BOARDS = [
     { id: 'b', name: 'Rastgele', desc: 'Konu sınırı yok. Ne istersen paylaş.' },
     { id: 'g', name: 'Teknoloji', desc: 'Donanım, yazılım ve açık kaynak.' },
     { id: 'v', name: 'Oyunlar', desc: 'Oyunlar, retro ve incelemeler.' },
@@ -119,7 +119,8 @@
   }
 
   async function refresh() {
-    const data = await request('/api/posts');
+    const [boardData, data] = await Promise.all([request('/api/boards'), request('/api/posts')]);
+    if (Array.isArray(boardData.boards) && boardData.boards.length) BOARDS = boardData.boards.map(b => ({ id: String(b.id), name: String(b.name), desc: String(b.description || '') }));
     if (!Array.isArray(data.posts)) throw new Error('API yanıtında posts listesi bulunamadı.');
     posts = data.posts.map(normalize).filter(p => Number.isSafeInteger(p.no) && p.no > 0);
     loaded = true;
@@ -272,6 +273,12 @@
     return request('/api/admin/state', { headers: { 'X-Owner-Token': secret() } });
   }
 
+  async function adminCreateBoard(input) {
+    const result = await request('/api/boards', { method: 'POST', headers: { 'X-Owner-Token': secret() }, body: JSON.stringify({ id: clean(input.id, 8).toLowerCase(), name: clean(input.name, 40), description: clean(input.description, 120) }) });
+    await refresh();
+    return result;
+  }
+
   async function adminAction(action, payload = {}) {
     return request('/api/admin/action', {
       method: 'POST',
@@ -283,6 +290,6 @@
   window.ChanStore = {
     boards: () => BOARDS.slice(),
     getBoard, listThreads, getThread, findPost, recentPosts, stats,
-    createThread, createReply, createPrivateReply, deletePost, reportPost, isOwn, checkOwner, refresh, adminState, adminAction, limits: LIMITS
+    createThread, createReply, createPrivateReply, deletePost, reportPost, isOwn, checkOwner, refresh, adminState, adminAction, adminCreateBoard, limits: LIMITS
   };
 })();
