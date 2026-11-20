@@ -358,7 +358,21 @@
     } catch (err) {
       if (err && err.message === '31CHAN HİZMETİ GEÇİCİ OLARAK SONA ERDİ') {
         document.title = '31chan · Geçici olarak kapalı';
-        document.body.innerHTML = `<main style="min-height:100vh;display:grid;place-items:center;padding:24px;background:#0f1012;color:#f2f2f2;font-family:system-ui,sans-serif;text-align:center"><section><h1 style="font-size:clamp(1.5rem,5vw,2.4rem);margin-bottom:12px">31CHAN HİZMETİ GEÇİCİ OLARAK SONA ERDİ</h1><p style="color:#a6a6a6">Site geçici olarak bakıma alınmıştır. Sayfa, bakım süresi dolana kadar aralıklarla kontrol edilecek.</p></section></main>`;
+        document.body.innerHTML = `<main style="min-height:100vh;display:grid;place-items:center;padding:24px;background:#0f1012;color:#f2f2f2;font-family:system-ui,sans-serif;text-align:center"><section><h1 style="font-size:clamp(1.5rem,5vw,2.4rem);margin-bottom:12px">31CHAN HİZMETİ GEÇİCİ OLARAK SONA ERDİ</h1><p style="color:#a6a6a6">Site geçici olarak bakıma alınmıştır.</p><button id="owner-maintenance-login" type="button" style="margin-top:18px;padding:10px 16px;cursor:pointer">Owner girişi</button><p id="owner-maintenance-error" style="color:#ff8585"></p></section></main>`;
+        document.getElementById('owner-maintenance-login').addEventListener('click', async () => {
+          const token = prompt('Cloudflare Worker ayarlarında OWNER_TOKEN adlı Secret değerini gir:');
+          if (!token) return;
+          const button = document.getElementById('owner-maintenance-login');
+          button.disabled = true;
+          try {
+            const valid = await S.checkOwner(token);
+            if (!valid) { document.getElementById('owner-maintenance-error').textContent = 'OWNER_TOKEN geçersiz.'; button.disabled = false; return; }
+            await render();
+          } catch (error) {
+            document.getElementById('owner-maintenance-error').textContent = error.message || 'Owner doğrulanamadı.';
+            button.disabled = false;
+          }
+        });
         window.setTimeout(() => location.reload(), 30000);
         return;
       }
