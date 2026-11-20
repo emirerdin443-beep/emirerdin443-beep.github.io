@@ -9,6 +9,9 @@
   const API = 'https://31chan-api.emirerdin443.workers.dev';
   const OWN_KEY = '31chan:own:v1';
   const SECRET_KEY = '31chan:secret:v1';
+  const OWNER_TOKEN_KEY = '31chan:owner-token:v1';
+  function getOwnerToken() { return localStorage.getItem(OWNER_TOKEN_KEY) || ''; }
+  function setOwnerToken(token) { const value = String(token || '').trim(); if (value) localStorage.setItem(OWNER_TOKEN_KEY, value); }
   const DEVICE_KEY = '31chan:device:v1';
   let BOARDS = [
     { id: 'b', name: 'Rastgele', desc: 'Konu sınırı yok. Ne istersen paylaş.' },
@@ -108,7 +111,7 @@
         'Content-Type': 'application/json',
         'X-Device-Token': deviceToken(),
         'X-User-Token': secret(),
-        'X-Owner-Token': secret(),
+        'X-Owner-Token': getOwnerToken(),
         ...(options.headers || {})
       }
     });
@@ -253,10 +256,13 @@
     });
   }
 
-  async function checkOwner() {
+  async function checkOwner(token) {
+    if (token !== undefined) setOwnerToken(token);
+    const ownerToken = getOwnerToken();
+    if (!ownerToken) return false;
     const result = await request('/api/owner/check', {
       method: 'POST',
-      body: JSON.stringify({ owner_token: secret() })
+      body: JSON.stringify({ owner_token: ownerToken })
     });
     return result.owner === true;
   }
@@ -271,7 +277,7 @@
   }
 
   async function adminState() {
-    return request('/api/admin/state', { headers: { 'X-Owner-Token': secret() } });
+    return request('/api/admin/state', { headers: { 'X-Owner-Token': getOwnerToken() } });
   }
 
   async function adminCreateBoard(input) {
