@@ -167,6 +167,7 @@
     const logs = Array.isArray(adminData?.logs) ? adminData.logs : [];
     const users = Array.isArray(adminData?.users) ? adminData.users : [];
     const site = adminData?.site || {};
+    const boards = S.boards();
     const suspended = Number(site.suspended_until || 0) > Math.floor(Date.now() / 1000);
     const banRows = bans.map(b => `<li>
       <div><b>${esc(b.ban_type)}</b> · <code>${esc(b.ban_value)}</code>
@@ -187,6 +188,13 @@
       <div class="owner-panel-head"><h2>Owner Paneli</h2><button type="button" class="link" data-action="admin-refresh">Verileri yenile</button></div>
       <p class="${suspended ? 'notice' : 'muted'}">${suspended ? 'Bakım modu etkin. Bitiş: ' + fmtTime(Number(site.suspended_until) * 1000) : 'Bakım modu kapalı'}</p>
       <div class="owner-grid">
+        <form data-admin-form="create_board">
+          <h3>Yeni pano oluştur</h3>
+          <label>Pano kodu<input name="id" required minlength="1" maxlength="8" pattern="[a-z0-9]+" placeholder="ör. tarih"></label>
+          <label>Pano adı<input name="name" required maxlength="40" placeholder="Tarih"></label>
+          <label>Açıklama<input name="description" maxlength="120" placeholder="Tarih ve geçmiş üzerine"></label>
+          <button type="submit" class="primary">Panoyu oluştur</button>
+        </form>
         <form data-admin-form="suspend_site">
           <h3>Siteyi geçici kapat</h3>
           <label>Süre (dakika)<input name="minutes" type="number" min="1" max="10080" value="10" required></label>
@@ -204,6 +212,8 @@
           <button type="button" data-action="admin-kick">Kick (10 dakika)</button>
         </form>
       </div>
+      <h3>Panolar (${boards.length})</h3>
+      <ul class="admin-list">${boards.map(b => `<li><div><b>/${esc(b.id)}/ · ${esc(b.name)}</b><span class="muted">${esc(b.desc)}</span></div></li>`).join('')}</ul>
       <h3>Aktif engeller (${bans.length})</h3>
       ${banRows ? '<ul class="admin-list">' + banRows + '</ul>' : '<p class="muted">Aktif engel yok.</p>'}
       <h3>Kullanıcılar · gönderiden engelle (${users.length})</h3>
@@ -658,6 +668,10 @@
       const action = adminForm.dataset.adminForm;
       const payload = Object.fromEntries(fd.entries());
       if (action === 'suspend_site') payload.minutes = Number(payload.minutes);
+      if (action === 'create_board') {
+        payload.id = String(payload.id || '').trim().toLowerCase();
+        if (!/^[a-z0-9]{1,8}$/.test(payload.id)) { alert('Pano kodu 1-8 küçük harf veya rakam olmalı.'); return; }
+      }
       if (action === 'ban') {
         payload.minutes = Number(payload.minutes);
         payload.ban_type = String(payload.ban_type || 'user');
@@ -665,7 +679,8 @@
       const submit = adminForm.querySelector('button[type="submit"]');
       if (submit) submit.disabled = true;
       try {
-        await S.adminAction(action, payload);
+        if (action === 'create_board') await S.adminCreateBoard(payload);
+        else await S.adminAction(action, payload);
         adminData = await S.adminState();
         render();
       } catch (err) {
