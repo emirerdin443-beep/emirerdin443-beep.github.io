@@ -281,7 +281,7 @@
   }
 
   async function adminCreateBoard(input) {
-    const result = await request('/api/boards', { method: 'POST', headers: { 'X-Owner-Token': secret() }, body: JSON.stringify({ id: clean(input.id, 8).toLowerCase(), name: clean(input.name, 40), description: clean(input.description, 120) }) });
+    const result = await request('/api/boards', { method: 'POST', headers: { 'X-Owner-Token': getOwnerToken() }, body: JSON.stringify({ id: clean(input.id, 8).toLowerCase(), name: clean(input.name, 40), description: clean(input.description, 120) }) });
     await refresh();
     return result;
   }
@@ -289,7 +289,7 @@
   async function adminAction(action, payload = {}) {
     return request('/api/admin/action', {
       method: 'POST',
-      headers: { 'X-Owner-Token': secret() },
+      headers: { 'X-Owner-Token': getOwnerToken() },
       body: JSON.stringify({ action, ...payload })
     });
   }
