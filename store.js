@@ -108,6 +108,7 @@
         'Content-Type': 'application/json',
         'X-Device-Token': deviceToken(),
         'X-User-Token': secret(),
+        'X-Owner-Token': secret(),
         ...(options.headers || {})
       }
     });
