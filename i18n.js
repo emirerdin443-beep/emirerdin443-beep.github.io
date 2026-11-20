@@ -113,10 +113,48 @@
     'Görsel okunamadı.': ['Could not read image.','Не удалось прочитать изображение.','No se pudo leer la imagen.','Şəkil oxunmadı.','Bild konnte nicht gelesen werden.','Impossible de lire l’image.','无法读取图片。'],
     'Dosya okunamadı.': ['Could not read file.','Не удалось прочитать файл.','No se pudo leer el archivo.','Fayl oxunmadı.','Datei konnte nicht gelesen werden.','Impossible de lire le fichier.','无法读取文件。'],
     'Eruda yüklenemedi. İnternet bağlantısını kontrol et.': ['Could not load Eruda. Check your internet connection.','Не удалось загрузить Eruda. Проверьте подключение к интернету.','No se pudo cargar Eruda. Comprueba tu conexión.','Eruda yüklənmədi. İnternet bağlantını yoxla.','Eruda konnte nicht geladen werden. Prüfe die Internetverbindung.','Impossible de charger Eruda. Vérifiez votre connexion.','无法加载 Eruda，请检查网络连接。']
+    "Yeni mesaj gönder": ["Send a new message","Отправить новое сообщение","Enviar un mensaje nuevo","Yeni mesaj göndər","Neue Nachricht senden","Envoyer un nouveau message","发送新消息"],
+    "Mesaja cevap yaz": ["Reply to message","Ответить на сообщение","Responder al mensaje","Mesaja cavab yaz","Auf Nachricht antworten","Répondre au message","回复消息"],
+    "Mesaj": ["Message","Сообщение","Mensaje","Mesaj","Nachricht","Message","消息"],
+    "Mesajı gönder": ["Send message","Отправить сообщение","Enviar mensaje","Mesajı göndər","Nachricht senden","Envoyer le message","发送消息"],
+    "Mesajı aç": ["Open message","Открыть сообщение","Abrir mensaje","Mesajı aç","Nachricht öffnen","Ouvrir le message","打开消息"],
+    "Yeni mesaj yok. İlk mesajı sen gönder.": ["No messages yet. Send the first one.","Сообщений пока нет. Отправьте первое.","Aún no hay mensajes. Envía el primero.","Hələ mesaj yoxdur. İlk mesajı sən göndər.","Noch keine Nachrichten. Sende die erste.","Aucun message pour le moment. Envoyez le premier.","暂无消息，发送第一条吧。"],
+    "Bu panoda henüz soru yok. Aşağıdan ilk soruyu sorabilirsin.": ["No questions on this board yet. Ask the first one below.","На этой доске пока нет вопросов. Задайте первый ниже.","Aún no hay preguntas en este tablero. Haz la primera abajo.","Bu lövhədə hələ sual yoxdur. İlk sualı aşağıdan verə bilərsən.","Noch keine Fragen in diesem Board. Stelle unten die erste.","Aucune question sur ce forum. Posez la première ci-dessous.","此板块暂无问题，请在下方提出第一个问题。"],
+    "Bu panoda henüz konu yok. Aşağıdan ilk konuyu açabilirsin.": ["No threads on this board yet. Start the first one below.","На этой доске пока нет тем. Создайте первую ниже.","Aún no hay hilos en este tablero. Crea el primero abajo.","Bu lövhədə hələ mövzu yoxdur. İlk mövzunu aşağıdan aça bilərsən.","Noch keine Threads in diesem Board. Erstelle unten den ersten.","Aucun fil sur ce forum. Créez le premier ci-dessous.","此板块暂无主题，请在下方发起第一个主题。"],
+    "Yanıtın": ["Your reply","Ваш ответ","Tu respuesta","Cavabın","Deine Antwort","Votre réponse","你的回复"],
+    "Özel yanıt": ["Private reply","Личный ответ","Respuesta privada","Şəxsi cavab","Private Antwort","Réponse privée","私密回复"],
+    "Kullanıcıya yanıtla": ["Reply to user","Ответить пользователю","Responder al usuario","İstifadəçiyə cavab ver","Dem Nutzer antworten","Répondre à l’utilisateur","回复用户"],
+    "Gönderiyi Raporla": ["Report post","Пожаловаться на публикацию","Denunciar publicación","Paylaşımı şikayət et","Beitrag melden","Signaler la publication","举报帖子"],
+    "Kullanıcıyı Raporla": ["Report user","Пожаловаться на пользователя","Denunciar usuario","İstifadəçini şikayət et","Nutzer melden","Signaler l’utilisateur","举报用户"],
+    "Yeni pano oluştur": ["Create board","Создать доску","Crear tablero","Yeni lövhə yarat","Board erstellen","Créer un forum","创建板块"],
+    "Pano kodu": ["Board code","Код доски","Código del tablero","Lövhə kodu","Board-Code","Code du forum","板块代码"],
+    "Pano adı": ["Board name","Название доски","Nombre del tablero","Lövhə adı","Boardname","Nom du forum","板块名称"],
+    "Açıklama": ["Description","Описание","Descripción","Təsvir","Beschreibung","Description","说明"],
+    "Panoyu oluştur": ["Create board","Создать доску","Crear tablero","Lövhə yarat","Board erstellen","Créer le forum","创建板块"],
+    "Token ile banla": ["Ban by token","Заблокировать по токену","Bloquear por token","Token ilə blokla","Per Token sperren","Bannir par jeton","按令牌封禁"],
+    "IP ile banla": ["Ban by IP","Заблокировать по IP","Bloquear por IP","IP ilə blokla","Per IP sperren","Bannir par IP","按 IP 封禁"],
+    "Cihazla banla": ["Ban device","Заблокировать устройство","Bloquear dispositivo","Cihazı blokla","Gerät sperren","Bannir l’appareil","封禁设备"],
+    "Onay bekleyen raporlar": ["Pending reports","Жалобы на рассмотрении","Denuncias pendientes","Gözləyən şikayətlər","Ausstehende Meldungen","Signalements en attente","待处理举报"],
+    "Son moderasyon işlemleri": ["Recent moderation actions","Последние действия модерации","Acciones recientes de moderación","Son moderasiya əməliyyatları","Letzte Moderationsaktionen","Dernières actions de modération","最近的管理操作"],
+    "Anonim kullanıcı": ["Anonymous user","Анонимный пользователь","Usuario anónimo","Anonim istifadəçi","Anonymer Nutzer","Utilisateur anonyme","匿名用户"],
+    "Yeni gönderilerde kaydedilecek": ["Will be recorded for new posts","Будет записано для новых публикаций","Se registrará en nuevas publicaciones","Yeni paylaşımlarda qeydə alınacaq","Wird bei neuen Beiträgen gespeichert","Sera enregistré pour les nouvelles publications","将在新帖子中记录"],
+    "Token, IP veya cihaz belirteci": ["Token, IP, or device identifier","Токен, IP или идентификатор устройства","Token, IP o identificador de dispositivo","Token, IP və ya cihaz identifikatoru","Token, IP- oder Gerätekennung","Jeton, IP ou identifiant d’appareil","令牌、IP 或设备标识符"],
+    "Bu konu kilitlendi.": ["This thread is locked.","Эта тема заблокирована.","Este hilo está cerrado.","Bu mövzu kilidlənib.","Dieser Thread ist gesperrt.","Ce fil est verrouillé.","此主题已锁定。"],
+    "Dosya okunamadı.": ["Could not read file.","Не удалось прочитать файл.","No se pudo leer el archivo.","Fayl oxunmadı.","Datei konnte nicht gelesen werden.","Impossible de lire le fichier.","无法读取文件。"],
+    "Görsel okunamadı.": ["Could not read image.","Не удалось прочитать изображение.","No se pudo leer la imagen.","Şəkil oxunmadı.","Bild konnte nicht gelesen werden.","Impossible de lire l’image.","无法读取图片。"],
+    "Yalnızca JPG, PNG, WEBP veya GIF yükleyebilirsin.": ["You can only upload JPG, PNG, WEBP, or GIF.","Можно загружать только JPG, PNG, WEBP или GIF.","Solo puedes subir JPG, PNG, WEBP o GIF.","Yalnızca JPG, PNG, WEBP və ya GIF yükləyə bilərsən.","Du kannst nur JPG, PNG, WEBP oder GIF hochladen.","Vous ne pouvez envoyer que JPG, PNG, WEBP ou GIF.","只能上传 JPG、PNG、WEBP 或 GIF。"],
+    "Görsel 8 MB'den büyük olamaz.": ["Image cannot exceed 8 MB.","Изображение не может превышать 8 МБ.","La imagen no puede superar los 8 MB.","Şəkil 8 MB-dan böyük ola bilməz.","Das Bild darf höchstens 8 MB groß sein.","L’image ne peut pas dépasser 8 Mo.","图片不能超过 8 MB。"],
+    "Bu kullanıcının yanıtlanabilir kimliği yok.": ["This user has no reply-enabled identity.","У этого пользователя нет идентификатора для ответа.","Este usuario no tiene una identidad que permita responder.","Bu istifadəçinin cavablandırıla bilən kimliyi yoxdur.","Dieser Nutzer hat keine antwortfähige Identität.","Cet utilisateur n’a pas d’identité permettant une réponse.","此用户没有可回复的身份标识。"],
+    "Yanıt türü: 1 = herkese açık, 2 = yalnızca bu kullanıcıya özel": ["Reply type: 1 = public, 2 = private to this user","Тип ответа: 1 = публичный, 2 = только этому пользователю","Tipo de respuesta: 1 = pública, 2 = privada para este usuario","Cavab növü: 1 = hamıya açıq, 2 = yalnız bu istifadəçiyə özəl","Antworttyp: 1 = öffentlich, 2 = nur für diesen Nutzer","Type de réponse : 1 = public, 2 = privé pour cet utilisateur","回复类型：1 = 公开，2 = 仅对此用户私密"],
+    "1 veya 2 seç.": ["Choose 1 or 2.","Выберите 1 или 2.","Elige 1 o 2.","1 və ya 2 seç.","Wähle 1 oder 2.","Choisissez 1 ou 2.","请选择 1 或 2。"],
+    "Owner girişi": ["Owner login","Вход владельца","Acceso del propietario","Owner girişi","Owner-Anmeldung","Connexion propriétaire","所有者登录"],
+    "OWNER_TOKEN geçersiz.": ["Invalid OWNER_TOKEN.","Неверный OWNER_TOKEN.","OWNER_TOKEN no válido.","OWNER_TOKEN yanlışdır.","Ungültiger OWNER_TOKEN.","OWNER_TOKEN invalide.","OWNER_TOKEN 无效。"],
+    "Owner doğrulanamadı.": ["Owner could not be verified.","Не удалось подтвердить владельца.","No se pudo verificar al propietario.","Owner təsdiqlənmədi.","Owner konnte nicht verifiziert werden.","Impossible de vérifier le propriétaire.","无法验证所有者。"],
+    "Cloudflare Worker ayarlarında OWNER_TOKEN adlı Secret değerini gir:": ["Enter the Secret value named OWNER_TOKEN in your Cloudflare Worker settings:","Введите значение Secret с именем OWNER_TOKEN в настройках Cloudflare Worker:","Introduce el valor Secret llamado OWNER_TOKEN en la configuración de Cloudflare Worker:","Cloudflare Worker ayarlarında OWNER_TOKEN adlı Secret dəyərini daxil et:","Gib den Secret-Wert OWNER_TOKEN in den Cloudflare-Worker-Einstellungen ein:","Saisissez la valeur Secret nommée OWNER_TOKEN dans les paramètres du Worker Cloudflare :","请输入 Cloudflare Worker 设置中名为 OWNER_TOKEN 的 Secret 值："],
   };
   const LANG_INDEX = { en: 0, ru: 1, es: 2, az: 3, de: 4, fr: 5, zh: 6 };
   const SELECTOR = '#languageSelect';
-  const SKIP = '.pcomment,.pname,.psubj,.pid,.pimg figcaption,.snip,.csub,.cmeta,script,style,textarea,input,option';
+  const SKIP = '.pcomment,.pname,.psubj,.pid,.pimg figcaption,.snip,.csub,.cmeta,script,style,textarea,input';
   const originalText = new WeakMap();
   const originalAttrs = new WeakMap();
   let lang = localStorage.getItem('31chan:language') || 'tr';
@@ -160,7 +198,6 @@
       if (node.nodeValue !== next) node.nodeValue = next;
     }
     document.querySelectorAll('[title],[placeholder],[aria-label]').forEach(el => {
-      if (el.closest(SKIP)) return;
       ['title','placeholder','aria-label'].forEach(attr => {
         if (!el.hasAttribute(attr)) return;
         let attrs = originalAttrs.get(el);
